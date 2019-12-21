@@ -79,7 +79,7 @@ def augment(df):
     
 if __name__ == '__main__':
     # load RSC15 preprocessed train dataframe
-    PATH_TO_TRAIN = './data/train.csv'
+    PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/rsc15_train_valid.txt'
     train_data = pd.read_csv(PATH_TO_TRAIN, sep='\t', dtype={'ItemId':np.int64})
 
     new_df = preprocess_df(train_data)
@@ -91,4 +91,4 @@ if __name__ == '__main__':
 
     # Now, we augment the sessions copying each entry an additional (dwellReps[i]-1) times
     df_aug = augment(new_df)
-    df_aug.to_csv("./data/augmented_train.csv", index=False, sep='\t')
+    df_aug.to_csv("/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/augmented_train_valid.csv", index=False, sep='\t')
