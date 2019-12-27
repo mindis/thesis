@@ -618,7 +618,7 @@ class GRU4Rec:
         session_ids : 1D array
             Contains the session IDs of the events of the batch. Its length must equal to the prediction batch size (batch param).
         input_item_ids : 1D array
-            Contains the item IDs of the events of the batch. Every item ID must be must be in the training data of the network. Its length must equal to the prediction batch size (batch param).
+            Contains the item IDs of the events of the batch. Every item ID must be in the training data of the network. Its length must equal to the prediction batch size (batch param).
         predict_for_item_ids : 1D array (optional)
             IDs of items for which the network should give prediction scores. Every ID must be in the training set. The default value is None, which means that the network gives prediction on its every output (i.e. for all items in the training set).
         batch : int

@@ -10,10 +10,11 @@ config.gpu_options.allow_growth = True
 import keras
 import keras.backend as K
 from keras.models import Model
-from keras.utils import to_categorical
+from keras.utils.np_utils import to_categorical
 from keras.callbacks import ModelCheckpoint
 from keras.losses import categorical_crossentropy
 from keras.layers import Input, Dense, Dropout, CuDNNGRU, Embedding
+
 
 
 class SessionDataset:
@@ -259,9 +260,9 @@ def train_model(model, args, save_weights = False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Keras GRU4REC: session-based recommendations')
     parser.add_argument('--resume', type=str, help='stored model path to continue training')
-    parser.add_argument('--train-path', type=str, default='../../processedData/rsc15_train_tr.txt')
-    parser.add_argument('--dev-path', type=str, default='../../processedData/rsc15_train_valid.txt')
-    parser.add_argument('--test-path', type=str, default='../../processedData/rsc15_test.txt')
+    parser.add_argument('--train-path', type=str, default='/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/train_full_splitted/1.csv')
+    parser.add_argument('--dev-path', type=str, default='/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/rsc15_train_valid.txt')
+    parser.add_argument('--test-path', type=str, default='/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/rsc15_test.txt')
     parser.add_argument('--batch-size', type=str, default=512)
     args = parser.parse_args()
 

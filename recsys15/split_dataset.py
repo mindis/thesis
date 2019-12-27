@@ -6,14 +6,14 @@ def split_data(PATHFILE):
     filename = 1
     for i in range(len(csvfile)):
 
-         if i%1000000 == 0:
-             open(str(filename) + '.csv', 'w+').writelines(csvfile[i:i+1000000])
+         if i%100000 == 0:
+             open(str(filename) + '.csv', 'w+').writelines(csvfile[i:i+100000])
              filename += 1
 
 #print csv
 if __name__ == "__main__":
 
     split_data('/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/rsc15_train_full.txt')
-    df = pd.read_csv('/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/train_full_splitted/1.csv',delimiter='\t')
+    #df = pd.read_csv('/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/train_full_splitted/1.csv',delimiter='\t')
 
-print(df)
+#print(df)

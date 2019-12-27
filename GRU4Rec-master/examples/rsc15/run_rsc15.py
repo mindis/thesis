@@ -13,7 +13,7 @@ import pandas as pd
 import gru4rec
 import evaluation
 
-PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/rsc15_train_valid.txt'
+PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/train_full_splitted317/1.csv'
 PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/recsys-challenge-2015/processed/rsc15_test.txt'
 
 if __name__ == '__main__':
