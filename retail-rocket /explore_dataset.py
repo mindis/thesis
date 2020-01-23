@@ -44,7 +44,7 @@ def actions_plot(events):
     g = sns.barplot(events_count.index, events_count.values, ax=axs[1])
     # g.set_yscale('log')
     events_count = events["event"].value_counts()[1:]
-    plt.title('Add-to-cart V/s Transaction')
+    plt.title('Add-to-cart Vs Transaction')
     sns.barplot(events_count.index, events_count.values)
     plt.show()
 
@@ -85,10 +85,13 @@ def create_dataframe(visitor_list,events):
 
 if __name__=='__main__':
     ITEMS1_CSV_PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/item_properties_part1.csv'
-    ITEMS2_CSV_PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/item_properties_part2.csv'
+    #ITEMS2_CSV_PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/item_properties_part2.csv'
     EVENTS_PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/events.csv'
     events,visitors = events_explored(EVENTS_PATH)
+    df = pd.read_csv('/home/nick/Desktop/thesis/datasets/retail-rocket/item_properties_part1.csv')
+    print(df)
     #items = items_explored(ITEMS1_CSV_PATH,ITEMS2_CSV_PATH)
+    #print(items.head(20))
     print(events.head())
     print(events.columns)
     # #print(items.head())
@@ -108,13 +111,14 @@ if __name__=='__main__':
     # sns.pairplot(main_df, x_vars=['num_items_viewed', 'view_count', 'bought_count'],
     #              y_vars=['num_items_viewed', 'view_count', 'bought_count'], hue='purchased')
 
-    items = events.itemid.value_counts()
+    #items = events.itemid.value_counts()
+
 
     # plt.figure(figsize=(16, 9))
     # plt.hist(items.values, bins=10, log=True, color='red')
     # plt.xlabel('Number of times item appeared', fontsize=16)
     # plt.ylabel('Count of displays with item', fontsize=16)
     # #plt.show()
-    corr = events[events.columns].corr()
-    sns.heatmap(corr, annot=True)
-    plt.show()
+    #corr = events[events.columns].corr()
+    #sns.heatmap(corr, annot=True)
+    #plt.show()
