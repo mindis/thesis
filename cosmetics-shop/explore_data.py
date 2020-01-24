@@ -69,8 +69,15 @@ df = data['user_session'].value_counts()
 #pd.DataFrame(df,columns=['user_session','session_number'])
 
 df = pd.DataFrame({'user_session':df.index, 'number of events':df.values})
-print(df)
-print(df[df['number of events']>1])
+#print(df)
+
+df = df[df['number of events'] == 1]
+list = df['user_session']
+#print(list)
+#keep only those records with 2 or more actions
+data = data[~data['user_session'].isin(list)]
+print(data)
+
 
 
 # for i in range(len(data)):
