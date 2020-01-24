@@ -1,3 +1,3 @@
 # thesis
 
-### Intelligent Systems & Software Engineering Labgroup (Electrical & Computer Engineering Dept AUTH) 
+Intelligent Systems & Software Engineering Labgroup (Electrical & Computer Engineering Dept AUTH) 
