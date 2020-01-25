@@ -40,9 +40,9 @@ def actions_plot(events):
     sns.barplot(events_count.index, events_count.values, ax=axs[0])
 
     events_count = events["event"].value_counts()[1:]
-    # plt.title('Actions Vs Count')
+    plt.title('Actions Vs Count')
     g = sns.barplot(events_count.index, events_count.values, ax=axs[1])
-    # g.set_yscale('log')
+    g.set_yscale('log')
     events_count = events["event"].value_counts()[1:]
     plt.title('Add-to-cart Vs Transaction')
 
@@ -85,6 +85,8 @@ def top5addtocart_plot(grouped):
     x = [i[0] for i in sorted_count_addtocart[:5]]
     y = [i[1] for i in sorted_count_addtocart[:5]]
     sns.barplot(x, y, order=x)
+    plt.xlabel('addtocart actions')
+    plt.ylabel('number of appearences')
     plt.show()
 
 
@@ -148,6 +150,7 @@ if __name__=='__main__':
     #print(items.head(20))
     print(events.head())
     print(events.columns)
+    print(events.shape)
 
     # Get all unique visitors of the site
     all_visitors = events.visitorid.sort_values().unique()
@@ -166,6 +169,7 @@ if __name__=='__main__':
     #Print only events made by user: 187946
     print(events.loc[events['itemid'] == 187946])
 
+    actions_plot(events)
     #group events
     grouped = events.groupby('event')['itemid'].apply(list)
     top5itemsviewed_plot(grouped)
