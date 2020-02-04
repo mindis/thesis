@@ -105,7 +105,16 @@ if __name__ == "__main__":
     dataset = build_dataset(data)
     print(dataset)
 
+    #Compute session duration for each session
+    dataset.event_time = pd.to_datetime(dataset.event_time)
+    session_duration_df = dataset.groupby('user_session')['event_time'].agg(lambda x: max(x) - min(x)).to_frame().rename(columns={'Timestamp': 'Duration'})
+    session_duration_df = pd.DataFrame(session_duration_df)
+    print(session_duration_df)
 
+    #store session duration dataset
+    session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/dwelltime.csv')
+
+    #save cosmetics-shop cleaned dataset
     #data.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
 
 

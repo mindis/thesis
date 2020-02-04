@@ -5,6 +5,7 @@ A python file for exploration of recsys-challenge-2015 dataset
 import datetime
 import datetime as dt
 import pandas as pd
+from datetime import timedelta
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -15,6 +16,11 @@ df = pd.read_csv(DATAPATH,sep ='\t')
 df['Time']=(pd.to_datetime(df['Time'],unit='s'))
 # get the shape of the dataset
 print(df.head(10))
+
+df.Time = pd.to_datetime(df.Time)
+session_duration_df = df.groupby('SessionId')['Time'].agg(lambda x: max(x) - min(x)).to_frame()
+session_duration_df = pd.DataFrame(session_duration_df)
+print(session_duration_df)
 
 #calculate the clicks on each SessionId
 session_len = df['SessionId'].value_counts()
