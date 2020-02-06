@@ -83,15 +83,19 @@ def build_dataset(data):
     #keep only those records with 2 or more actions
     data = data[~data['user_session'].isin(list)]
 
-    # data['event_time'] = pd.to_datetime(data['event_time'].dt.strftime("%b %d %Y %H:%M:%S"))
-
-    # data['event_time'] = pd.to_datetime(data['event_time'], format='%b %d %Y %H:%M:%S')
-
-    # print(data['event_time'][1] - data['event_time'][0])
-    # data.groupby('user_session').apply(lambda )
-
 
     return data
+
+def get_session_duration_arr(data):
+    # Compute session duration for each session
+    data.event_time = pd.to_datetime(data.event_time)
+    df = data.groupby('user_session')['event_time'].agg(
+        lambda x: max(x) - min(x)).to_frame().rename(columns={'Timestamp': 'Duration'})
+    df = pd.DataFrame(df)
+    print(df)
+
+    return df
+
 
 if __name__ == "__main__":
 
@@ -105,17 +109,17 @@ if __name__ == "__main__":
     dataset = build_dataset(data)
     print(dataset)
 
-    #Compute session duration for each session
-    dataset.event_time = pd.to_datetime(dataset.event_time)
-    session_duration_df = dataset.groupby('user_session')['event_time'].agg(lambda x: max(x) - min(x)).to_frame().rename(columns={'Timestamp': 'Duration'})
-    session_duration_df = pd.DataFrame(session_duration_df)
-    print(session_duration_df)
+    # Compute session duration for each session
+    #session_duration_df = get_session_duration_arr(dataset)
 
     #store session duration dataset
-    session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/dwelltime.csv')
+    #session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/dwelltime.csv')
 
     #save cosmetics-shop cleaned dataset
     #data.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
+
+    purchases_df = dataset.loc[dataset.event_type == 'purchase']
+    print(purchases_df)
 
 
 

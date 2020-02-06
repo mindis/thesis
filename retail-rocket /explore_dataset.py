@@ -164,10 +164,7 @@ if __name__=='__main__':
 
     #Get top 20 viewed/clicked/purchased items
     top20_items = events['itemid'].value_counts().head(20)
-    print(top20_items)
-
-    #Print only events made by user: 187946
-    print(events.loc[events['itemid'] == 187946])
+    print('Top-20 interacted items:{}'.format(top20_items))
 
     actions_plot(events)
     #group events
