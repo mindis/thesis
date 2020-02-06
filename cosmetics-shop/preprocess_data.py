@@ -26,11 +26,11 @@ def get_data_info(data):
     plt.ylabel('Number of Events in Dataset')
     plt.bar(range(len(event_types_freq)), event_types_freq['frequencies'])
     plt.xticks(range(len(event_types_freq)), event_types, rotation='vertical')
-    # plt.show()
+    plt.show()
 
     # Get only purchases
-    only_purchases = data.loc[data.event_type == 'purchase']
-    print(only_purchases)
+    # only_purchases = data.loc[data.event_type == 'purchase']
+    # print(only_purchases)
 
     # Shows the most popular brands (by total sales)
     # With brands only
@@ -49,9 +49,6 @@ def get_data_info(data):
     # get number of sessions made
     sessions_num = data['user_session'].nunique()
     print('\nThe number of sessions in this dataset is:{}'.format(sessions_num))
-
-    # example: get all events of the same user
-    # print(data.loc[data.user_id == 10280338].sort_values(by='event_time'))
 
     cat_num = data['category_id'].nunique()
     print('\nThe number of unique categories in this dataset is:{}'.format(cat_num))
