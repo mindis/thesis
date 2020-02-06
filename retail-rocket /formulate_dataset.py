@@ -61,6 +61,7 @@ df2 = df2[~df2['visitorid'].isin(list)]
 print(df2)
 
 cleaned_data = pd.DataFrame(data=df2)
+cleaned_data.drop(axis=1,columns='event',inplace=True)
 #extract to csv
 cleaned_data.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv')
 

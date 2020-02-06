@@ -15,7 +15,7 @@ df = pd.read_csv(DATAPATH,sep ='\t')
 #unix timestamp to datetime
 df['Time']=(pd.to_datetime(df['Time'],unit='s'))
 # get the shape of the dataset
-print(df.head(10))
+print(df)
 
 df.Time = pd.to_datetime(df.Time)
 session_duration_df = df.groupby('SessionId')['Time'].agg(lambda x: max(x) - min(x)).to_frame()
