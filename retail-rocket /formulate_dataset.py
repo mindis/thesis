@@ -43,7 +43,7 @@ def clean_dataset(events):
     df2 = df2[~df2['itemid'].isin(list)]
     print(df2)
 
-    '''keep visitors with >1 & <=30 clciks'''
+    '''keep visitors with >1 & <=30 clicks'''
 
     visitors_freq = pd.DataFrame(df2.visitorid.value_counts())
     visitors_freq.reset_index(inplace=True)
@@ -71,6 +71,8 @@ if __name__ == "__main__":
 
     final_df = clean_dataset(events)
     print(final_df)
+
+    print(final_df.groupby('visitorid').size())
 
 
     #extract to csv
