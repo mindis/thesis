@@ -29,7 +29,7 @@ def get_data_info(data):
     plt.show()
 
     # Get only purchases
-    # only_purchases = data.loc[data.event_type == 'purchase']
+    only_purchases = data.loc[data.event_type == 'purchase']
     # print(only_purchases)
 
     # Shows the most popular brands (by total sales)
@@ -56,7 +56,7 @@ def get_data_info(data):
 
 def build_dataset(data):
 
-    #clean dataset
+    """CLEAN / BUILD DATASET """
     data.drop(columns=['price' , 'category_code'],inplace=True)
     data.dropna(inplace=True)
     print(data.head(10))
@@ -68,18 +68,30 @@ def build_dataset(data):
     data.sort_values(by = ['user_session','event_time'],inplace=True)
 
     #calculate session length / drop one event sessions
-    df = data['user_session'].value_counts()
+    session_freq = data['user_session'].value_counts()
     #pd.DataFrame(df,columns=['user_session','session_number'])
 
-    df = pd.DataFrame({'user_session':df.index, 'number of events':df.values})
+    session_freq = pd.DataFrame({'user_session':session_freq.index, 'number of events':session_freq.values})
     #print(df)
 
-    df = df[df['number of events'] == 1]
-    list = df['user_session']
+    session_freq = session_freq[session_freq['number of events'] == 1]
+    list = session_freq['user_session']
     #print(list)
-    #keep only those records with 2 or more actions
+
+    """keep those records with 2 or more session actions"""
     data = data[~data['user_session'].isin(list)]
 
+    """delete remove_from_cart records"""
+    data = data[data['event_type'] != 'remove_from_cart']
+
+    """ delete rare product_ids """
+    product_freq = data['product_id'].value_counts()
+    product_freq = pd.DataFrame({'product_id':product_freq.index, 'product_frequency':product_freq.values})
+    product_freq = product_freq[product_freq['product_frequency'] == 1]
+    print(product_freq)
+    list2 = product_freq['product_id']
+
+    data = data[~data['product_id'].isin(list2)]
 
     return data
 
@@ -105,6 +117,7 @@ if __name__ == "__main__":
     #cleaning & building dataset
     dataset = build_dataset(data)
     print(dataset)
+    print(dataset['event_type'].unique())
 
     # Compute session duration for each session
     #session_duration_df = get_session_duration_arr(dataset)
@@ -116,7 +129,7 @@ if __name__ == "__main__":
     #data.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
 
     purchases_df = dataset.loc[dataset.event_type == 'purchase']
-    print(purchases_df)
+    #print(purchases_df)
 
 
 
