@@ -96,7 +96,7 @@ def build_dataset(data):
     return data
 
 def get_session_duration_arr(data):
-    # Compute session duration for each session
+    """Compute session duration for each session"""
     data.event_time = pd.to_datetime(data.event_time)
     df = data.groupby('user_session')['event_time'].agg(
         lambda x: max(x) - min(x)).to_frame().rename(columns={'Timestamp': 'Duration'})
@@ -116,11 +116,9 @@ if __name__ == "__main__":
 
     #cleaning & building dataset
     dataset = build_dataset(data)
-    print(dataset)
-    print(dataset['event_type'].unique())
+    print(dataset.head(20))
 
-    # Compute session duration for each session
-    #session_duration_df = get_session_duration_arr(dataset)
+    session_duration_df = get_session_duration_arr(dataset)
 
     #store session duration dataset
     #session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/dwelltime.csv')
@@ -128,7 +126,7 @@ if __name__ == "__main__":
     #save cosmetics-shop cleaned dataset
     #data.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
 
-    purchases_df = dataset.loc[dataset.event_type == 'purchase']
+    #purchases_df = dataset.loc[dataset.event_type == 'purchase']
     #print(purchases_df)
 
 

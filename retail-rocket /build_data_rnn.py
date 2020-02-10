@@ -72,7 +72,7 @@ if __name__ == "__main__":
     final_df = clean_dataset(events)
     print(final_df)
 
-    print(final_df.groupby('visitorid').size())
+    #print(final_df.groupby('visitorid').size())
 
 
     #extract to csv
