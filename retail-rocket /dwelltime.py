@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from formulate_dataset import clean_dataset
-from explore_dataset import events_explored
+from build_data_rnn import clean_dataset
+from data_exploration import events_explored
 
 
 def get_session_duration_arr(df):
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     ses_duration = get_session_duration_arr(df)
     print(ses_duration)
 
-    dw_t = compute_dwell_time(df)
+    #dw_t = compute_dwell_time(df)
     #print(dw_t)
 
     # new_df = join_dwell_reps(df, dw_t, threshold=200000)
