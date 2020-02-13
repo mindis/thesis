@@ -13,7 +13,7 @@ def clean_dataset(events):
     events.reset_index(inplace=True)
     events.drop(axis=1, columns='index', inplace=True)
     cart_df = pd.DataFrame(events.loc[events['event'] == 'addtocart'])
-    #print(len(cart_df))
+    print(len(cart_df))
     #print(len(events))
     #print(events.iloc[1])
 

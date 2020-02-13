@@ -54,7 +54,7 @@ def get_data_info(data):
     print('\nThe number of unique categories in this dataset is:{}'.format(cat_num))
 
 
-def build_dataset(data):
+def clean_dataset(data):
 
     """CLEAN / BUILD DATASET """
     data.drop(columns=['price' , 'category_code'],inplace=True)
@@ -82,7 +82,9 @@ def build_dataset(data):
     data = data[~data['user_session'].isin(list)]
 
     """delete remove_from_cart records"""
-    data = data[data['event_type'] != 'remove_from_cart']
+    #df = df[df.line_race != 0]
+
+    data = data[data.event_type != 'remove_from_cart']
 
     """ delete rare product_ids """
     product_freq = data['product_id'].value_counts()
@@ -101,7 +103,7 @@ def get_session_duration_arr(data):
     df = data.groupby('user_session')['event_time'].agg(
         lambda x: max(x) - min(x)).to_frame().rename(columns={'Timestamp': 'Duration'})
     df = pd.DataFrame(df)
-    print(df)
+    #print(df)
 
     return df
 
@@ -115,16 +117,16 @@ if __name__ == "__main__":
     get_data_info(data)
 
     #cleaning & building dataset
-    dataset = build_dataset(data)
-    print(dataset.head(20))
+    dataset = clean_dataset(data)
+    print(dataset['event_type'].unique())
 
     session_duration_df = get_session_duration_arr(dataset)
 
     #store session duration dataset
-    #session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/dwelltime.csv')
+    session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/session_durations.csv')
 
     #save cosmetics-shop cleaned dataset
-    #data.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
+    dataset.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
 
     #purchases_df = dataset.loc[dataset.event_type == 'purchase']
     #print(purchases_df)

@@ -38,9 +38,7 @@ def clean_data(df):
 
     return cleaned_data
 
-def get_ratings(df):
 
-    ratings = []
 
 
 EVENTS_PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/events.csv'
