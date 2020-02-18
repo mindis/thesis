@@ -73,17 +73,5 @@ if __name__ == "__main__":
 
 
 
-# x = np.array(ratings_df[['rating']].values) #returns a numpy array
-# print(x)
-# min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0,5))
-# x_scaled = min_max_scaler.fit_transform(x)
-# print(x_scaled)
-# ratings_df[['rating']] = x_scaled
-# print(ratings_df)
-
-#data = user_item_df.groupby(by = 'event').rating.apply(lambda x : x*0.15 if x == 'view' else (x*0.3 if x == 'addtocart' else x*0.55))
-# data = user_item_df.groupby(by = 'event').rating.apply(lambda x : x*0.15)
-# print(data)
-
 
 
