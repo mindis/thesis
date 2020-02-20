@@ -1,0 +1,18 @@
+2019-10-29 18:11:53,813 : start....
+2019-10-29 18:15:22,778 : Init: HR = 0.0977, NDCG = 0.0433
+2019-10-29 19:34:30,632 : Epoch 1: HR = 0.5119, NDCG = 0.2910, loss = 51.8666
+2019-10-29 21:06:31,943 : Epoch 2: HR = 0.5164, NDCG = 0.2907, loss = 50.4965
+2019-10-29 22:44:43,056 : Epoch 3: HR = 0.5194, NDCG = 0.2914, loss = 50.2069
+2019-10-30 10:36:50,425 : Epoch 4: HR = 0.5172, NDCG = 0.2899, loss = 50.1040
+2019-10-30 12:17:01,124 : Epoch 5: HR = 0.5185, NDCG = 0.2910, loss = 49.9948
+2019-10-30 14:34:52,312 : Epoch 6: HR = 0.5195, NDCG = 0.2916, loss = 49.9633
+2019-10-30 16:07:30,222 : Epoch 7: HR = 0.5199, NDCG = 0.2916, loss = 49.9036
+2019-10-30 18:00:19,257 : Epoch 8: HR = 0.5184, NDCG = 0.2913, loss = 49.8772
+2019-10-30 19:54:39,152 : Epoch 9: HR = 0.5225, NDCG = 0.2930, loss = 49.8651
+2019-10-30 21:30:20,973 : Epoch 10: HR = 0.5189, NDCG = 0.2918, loss = 49.8484
+2019-10-30 21:30:20,977 : Best epoch 9: HR = 0.5225, NDCG = 0.2930
+2020-02-13 11:40:43,243 : start....
+2020-02-15 12:18:17,365 : start....
+2020-02-15 13:03:59,004 : start....
+2020-02-15 13:04:08,237 : From /home/nick/.local/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+

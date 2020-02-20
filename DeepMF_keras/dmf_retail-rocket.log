@@ -1,0 +1,41 @@
+2020-02-15 14:02:22,680 : start....
+2020-02-15 14:02:53,862 : start....
+2020-02-15 14:03:01,335 : From /home/nick/.local/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+2020-02-15 14:09:32,586 : start....
+2020-02-15 14:09:40,053 : From /home/nick/.local/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+2020-02-15 14:12:01,441 : Init: HR = 0.0034, NDCG = 0.0015
+2020-02-15 14:12:01,496 : From /home/nick/.local/lib/python3.6/site-packages/tensorflow/python/ops/math_grad.py:1250: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+2020-02-15 14:28:36,418 : start....
+2020-02-15 14:28:44,081 : From /home/nick/.local/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+2020-02-15 14:31:06,398 : Init: HR = 0.0034, NDCG = 0.0015
+2020-02-15 14:31:06,454 : From /home/nick/.local/lib/python3.6/site-packages/tensorflow/python/ops/math_grad.py:1250: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+2020-02-15 15:01:29,577 : start....
+2020-02-15 15:01:37,363 : From /home/nick/.local/lib/python3.6/site-packages/keras/backend/tensorflow_backend.py:422: The name tf.global_variables is deprecated. Please use tf.compat.v1.global_variables instead.
+
+2020-02-15 15:04:13,213 : Init: HR = 0.0034, NDCG = 0.0015
+2020-02-15 15:04:13,279 : From /home/nick/.local/lib/python3.6/site-packages/tensorflow/python/ops/math_grad.py:1250: add_dispatch_support.<locals>.wrapper (from tensorflow.python.ops.array_ops) is deprecated and will be removed in a future version.
+Instructions for updating:
+Use tf.where in 2.0, which has the same broadcast rule as np.where
+2020-02-15 15:06:05,145 : start....
+2020-02-15 15:09:07,774 : Init: HR = 0.0034, NDCG = 0.0015
+2020-02-17 11:29:45,861 : start....
+2020-02-19 18:55:19,589 : start....
+2020-02-19 18:56:02,237 : Init: HR = 0.0236, NDCG = 0.0115
+2020-02-19 18:57:39,284 : Epoch 1: HR = 0.0352, NDCG = 0.0173, loss = 0.8786
+2020-02-19 18:59:14,084 : Epoch 2: HR = 0.0349, NDCG = 0.0160, loss = 0.8041
+2020-02-19 19:00:46,661 : Epoch 3: HR = 0.0414, NDCG = 0.0186, loss = 0.7742
+2020-02-19 19:02:18,803 : Epoch 4: HR = 0.0397, NDCG = 0.0196, loss = 0.7428
+2020-02-19 19:03:51,069 : Epoch 5: HR = 0.0431, NDCG = 0.0219, loss = 0.7306
+2020-02-19 19:05:22,653 : Epoch 6: HR = 0.0400, NDCG = 0.0202, loss = 0.7162
+2020-02-19 19:06:52,588 : Epoch 7: HR = 0.0408, NDCG = 0.0204, loss = 0.7219
+2020-02-19 19:08:22,422 : Epoch 8: HR = 0.0400, NDCG = 0.0220, loss = 0.7138
+2020-02-19 19:09:52,293 : Epoch 9: HR = 0.0383, NDCG = 0.0210, loss = 0.7244
+2020-02-19 19:11:22,388 : Epoch 10: HR = 0.0386, NDCG = 0.0214, loss = 0.7183
+2020-02-19 19:11:22,388 : Best epoch 5: HR = 0.0431, NDCG = 0.0219
