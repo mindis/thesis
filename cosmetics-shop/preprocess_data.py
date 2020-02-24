@@ -62,7 +62,7 @@ def clean_dataset(data):
     print(data.head(10))
 
     #number of events per session
-    print(data['user_session'].value_counts())
+    #print(data['user_session'].value_counts())
 
     #sort dataset by user session and event time
     data.sort_values(by = ['user_session','event_time'],inplace=True)
@@ -90,7 +90,7 @@ def clean_dataset(data):
     product_freq = data['product_id'].value_counts()
     product_freq = pd.DataFrame({'product_id':product_freq.index, 'product_frequency':product_freq.values})
     product_freq = product_freq[product_freq['product_frequency'] == 1]
-    print(product_freq)
+    #print(product_freq)
     list2 = product_freq['product_id']
 
     data = data[~data['product_id'].isin(list2)]
@@ -119,14 +119,16 @@ if __name__ == "__main__":
     #cleaning & building dataset
     dataset = clean_dataset(data)
     print(dataset['event_type'].unique())
+    print(dataset)
 
-    session_duration_df = get_session_duration_arr(dataset)
+    #session_duration_df = get_session_duration_arr(dataset)
 
     #store session duration dataset
-    session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/session_durations.csv')
+
+    #session_duration_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/session_durations.csv')
 
     #save cosmetics-shop cleaned dataset
-    dataset.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
+    #dataset.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv')
 
     #purchases_df = dataset.loc[dataset.event_type == 'purchase']
     #print(purchases_df)
