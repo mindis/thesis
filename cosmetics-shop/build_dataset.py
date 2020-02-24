@@ -56,7 +56,7 @@ def build_dataset_with_ratings(df, num):
         print(i)
 
     # df = pd.Dataframe(user_item_df)
-    df = pd.DataFrame(df[:num])
+    df = pd.DataFrame(df[:(num-1)])
     print(df)
     ratings_df = df.groupby(by=['user_id', 'product_id']).sum()
     ratings_df = pd.DataFrame(data=ratings_df)
@@ -75,17 +75,18 @@ if __name__ == "__main__":
 
     user_item_matrix = data.groupby(['user_id', 'product_id']).event_type.value_counts().to_frame()
     user_item_matrix = pd.DataFrame(data=user_item_matrix)
-    #user_item_matrix.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix.csv')
-    #print(user_item_matrix)
+    user_item_matrix.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
+    print(user_item_matrix)
 
-    user_item_matrix = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix.csv')
+    user_item_matrix = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
     print(user_item_matrix)
     user_item_matrix.rename(columns={"event_type.1": "rating"}, inplace=True)
     user_item_matrix['rating'].astype(float)
-    ratings = build_dataset_with_ratings(user_item_matrix, 10000)
+    ratings = build_dataset_with_ratings(user_item_matrix, len(user_item_matrix))
     print(ratings)
 
 
+    """Normalize ratings in 0 to 5 scale"""
 
     x = ratings.values  # returns a numpy array
     min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0,5))
@@ -93,8 +94,13 @@ if __name__ == "__main__":
     x_scaled = np.array(x_scaled)
     ratings['rating'] = x_scaled.round(2)
     print(ratings)
-    ratings.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings.csv')
+    ratings.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings_full.csv')
 
+
+
+    # ratings_df = ratings_df.merge(data,on=['user_id','product_id'],how='inner')
+    # print(ratings_df)
+    # ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings_merged.csv')
 
 
 
