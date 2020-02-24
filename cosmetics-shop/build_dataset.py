@@ -63,6 +63,17 @@ def build_dataset_with_ratings(df, num):
 
     return ratings_df
 
+def normalize_ratings(df):
+
+    x = np.array(df['rating'].values).reshape(-1,1) # returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 5))
+    x_scaled = min_max_scaler.fit_transform(x)
+    x_scaled = np.array(x_scaled)
+    df['rating'] = x_scaled.round(2)
+    print(df)
+
+    return df
+
 
 if __name__ == "__main__":
 
@@ -88,19 +99,8 @@ if __name__ == "__main__":
 
     """Normalize ratings in 0 to 5 scale"""
 
-    x = ratings.values  # returns a numpy array
-    min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0,5))
-    x_scaled = min_max_scaler.fit_transform(x)
-    x_scaled = np.array(x_scaled)
-    ratings['rating'] = x_scaled.round(2)
-    print(ratings)
-    ratings.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings_full.csv')
 
 
-
-    # ratings_df = ratings_df.merge(data,on=['user_id','product_id'],how='inner')
-    # print(ratings_df)
-    # ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings_merged.csv')
 
 
 
