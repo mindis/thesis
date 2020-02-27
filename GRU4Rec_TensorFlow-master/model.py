@@ -5,6 +5,8 @@ Created on Feb 26, 2017
 """
 import os
 import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from tensorflow.python.ops import rnn_cell
 import pandas as pd
 import numpy as np

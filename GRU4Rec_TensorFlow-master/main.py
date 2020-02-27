@@ -5,6 +5,8 @@ Author: Weiping Song
 """
 import os
 import tensorflow as tf
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 import pandas as pd
 import numpy as np
 import argparse
@@ -14,8 +16,12 @@ import evaluation
 
 from sklearn.model_selection import train_test_split
 
-PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv' #/PATH/TO/rsc15_train_full.txt'
- #'/PATH/TO/rsc15_test.txt'
+"""Uncomment the dataset the dataset path for experimenting """
+#PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv'
+PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_train2.csv'
+PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_test2.csv'
+#/PATH/TO/rsc15_train_full.txt'
+#'/PATH/TO/rsc15_test.txt'
 
 class Args():
     is_training = False
@@ -30,10 +36,12 @@ class Args():
     sigma = 0
     init_as_normal = False
     reset_after_session = True
-    #session_key = 'userId'
-    session_key = 'visitorid'
-    item_key = 'itemid'
-    time_key = 'timestamp'
+    #session_key = 'visitorid'
+    session_key = 'user_id'
+    #item_key = 'itemid'
+    item_key = 'product_id'
+    #time_key = 'timestamp'
+    time_key = 'event_time'
     grad_cap = 0
     test_model = 2
     checkpoint_dir = './checkpoint'
@@ -60,15 +68,19 @@ def parseArgs():
 
 if __name__ == '__main__':
     command_line = parseArgs()
-    data = pd.read_csv(PATH_TO_TRAIN, dtype={'itemid': np.int64})
+    data = pd.read_csv(PATH_TO_TRAIN, dtype={'product_id': np.int64})
+    valid = pd.read_csv(PATH_TO_TEST, dtype={'product_id': np.int64})
+    #print(data)
     #valid = data.iloc[90000:, :]
-    valid = data.iloc[90000:100000, :]
-    data = data.iloc[:90000, :]
+    #valid = data.iloc[90000:100000, :]
+    #data = data.iloc[:90000, :]
+    data.drop(columns='Unnamed: 0',axis=1,inplace=True)
+    valid.drop(columns='Unnamed: 0',axis=1,inplace=True)
     #valid = pd.read_csv(PATH_TO_TEST, dtype={'movieId': np.int64})
     #data, valid = train_test_split(data, random_state=42)
     args = Args()
     #args.n_items = len(data['movieId'].unique())
-    args.n_items = len(data['itemid'].unique())
+    args.n_items = len(data['product_id'].unique())
     args.layers = command_line.layer
     args.rnn_size = command_line.size
     args.n_epochs = command_line.epoch

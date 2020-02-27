@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size=50, session_key='visitorid', item_key='itemid', time_key='timestamp'):
+def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size=50, session_key='user_id', item_key='product_id', time_key='event_time'):
     
     '''
     Evaluates the GRU4Rec network wrt. recommendation accuracy measured by recall@N and MRR@N.
@@ -36,6 +36,7 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     '''
     model.predict = False
     # Build itemidmap from train data.
+    print(train_data)
     itemids = train_data[item_key].unique()
     itemidmap = pd.Series(data=np.arange(len(itemids)), index=itemids)
     
@@ -44,8 +45,8 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     offset_sessions = np.zeros(test_data[session_key].nunique()+1, dtype=np.int32)
     #compute the cumulative sum for the size of each session(per clicks)
     offset_sessions[1:] = test_data.groupby(session_key).size().cumsum()
-    print(offset_sessions.size)
-    evalutation_point_count = 0
+    #print(offset_sessions.size)
+    evaluation_point_count = 0
     mrr, recall = 0.0, 0.0
     if len(offset_sessions) - 1 < batch_size:
         batch_size = len(offset_sessions) - 1
@@ -53,7 +54,7 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     maxiter = iters.max()
     start = offset_sessions[iters]
     end = offset_sessions[iters+1]
-    print(start,end)
+    #print(start,end)
     in_idx = np.zeros(batch_size, dtype=np.int32)
     np.random.seed(42)
     while True:
@@ -78,7 +79,7 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
             rank_ok = ranks < cut_off
             recall += rank_ok.sum()
             mrr += (1.0 / ranks[rank_ok]).sum()
-            evalutation_point_count += len(ranks)
+            evaluation_point_count += len(ranks)
 
             #if i == 1 : print(preds, in_idx)
 
@@ -92,4 +93,4 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
                 iters[idx] = maxiter
                 start[idx] = offset_sessions[maxiter]
                 end[idx] = offset_sessions[maxiter+1]
-    return recall/evalutation_point_count, mrr/evalutation_point_count
+    return recall/evaluation_point_count, mrr/evaluation_point_count
