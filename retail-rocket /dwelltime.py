@@ -1,19 +1,8 @@
 import numpy as np
 import pandas as pd
+import datetime
 import matplotlib.pyplot as plt
 
-from build_data_rnn import clean_dataset
-from data_exploration import events_explored
-
-
-def get_session_duration_arr(df):
-    # Compute session duration for each visitor
-    df.timestamp = pd.to_datetime(df.timestamp)
-    data = df.groupby('visitorid')['timestamp'].agg(
-        lambda x: max(x) - min(x)).to_frame().rename(columns={'Timestamp': 'Duration'})
-    data = pd.DataFrame(data)
-
-    return data
 
 def compute_dwell_time(df):
     times_t = np.roll(df['timestamp'], -1)  # Take time row
@@ -49,21 +38,48 @@ def join_dwell_reps(df, dt, threshold=2000):
     return df
 
 if __name__ == "__main__":
-    EVENTS_PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/events.csv'
 
-    events, visitors = events_explored(EVENTS_PATH)
+    PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data2.csv'
 
-    df = clean_dataset(events)
 
-    ses_duration = get_session_duration_arr(df)
-    print(ses_duration)
+    df = pd.read_csv(PATH)
+    df.drop(columns=['Unnamed: 0'],inplace=True)
+    df.sort_values(by=['visitorid','timestamp'],inplace=True)
+    df.timestamp = pd.to_datetime(df.timestamp,unit='ms')
+    print(df)
 
-    #dw_t = compute_dwell_time(df)
+    dw_t = compute_dwell_time(df)
+    dw_t = pd.DataFrame(dw_t)
+    print(dw_t)
+
+    # data = join_dwell_reps(df,dw_t)
+    # print(data)
+    """Clean outliers"""
+    dw_t = dw_t[dw_t['timestamp'] <= '1 days 00:00:00']
     #print(dw_t)
 
-    # new_df = join_dwell_reps(df, dw_t, threshold=200000)
-    #
-    # print(new_df)
+    """Calculate the average dwelltime of the records, ignoring outliers"""
+    non_zero_dwt = dw_t[(dw_t['timestamp'] != '0 days 00:00:00') & (dw_t['timestamp'] < '0 days 01:00:00')]
+    print(non_zero_dwt)
+    av_dwt = non_zero_dwt['timestamp'].mean()
+    #av_dwt = datetime.datetime.strptime(av_dwt,"%H:%M:%S")
+    print(av_dwt)
+
+    """Replace last click duration of each session with the average dwelltime"""
+    dw_t.loc[dw_t['timestamp'] == '00:00:00'] = av_dwt
+    #dw_t['timestamp'].apply(lambda x: av_dwt if x == '00:00:00' else x)
+    dw_t.rename(columns = {"timestamp": "dwelltime"},inplace=True)
+
+    df.reset_index(inplace=True)
+    dw_t.reset_index(inplace=True)
+    dw_t = pd.DataFrame(dw_t)
+    print(dw_t)
+    print(df)
+
+    new_df = df.merge(dw_t,on='index',how='inner')
+    new_df = pd.DataFrame(new_df)
+    new_df.drop(columns='index',inplace=True)
+    #new_df.to_csv('/home/nick/Desktop/thesis/datasets/retail-rocket/dwelltime.csv')
 
 
 

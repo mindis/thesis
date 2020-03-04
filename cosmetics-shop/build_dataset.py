@@ -29,9 +29,9 @@ def build_dataset_for_rnn(df):
     '''duplicate addtocart rows giving a weight of 5 views &
     transaction rows giving a weight of 10 views'''
 
-    df = df.append([df[df.event_type.eq('cart')]] * 4, ignore_index=True)
+    df = df.append([df[df.event_type.eq('cart')]] * 2, ignore_index=True)
 
-    df = df.append([df[df.event_type.eq('purchase')]] * 9, ignore_index=True)
+    df = df.append([df[df.event_type.eq('purchase')]] * 4, ignore_index=True)
     df.sort_values(by=['user_session', 'event_time'], inplace=True)
 
     df = pd.DataFrame(df)
@@ -65,6 +65,8 @@ def build_dataset_with_ratings(df, num):
 
 def normalize_ratings(df):
 
+    """Normalize ratings in 0 to 5 scale"""
+
     x = np.array(df['rating'].values).reshape(-1,1) # returns a numpy array
     min_max_scaler = preprocessing.MinMaxScaler(feature_range=(0, 5))
     x_scaled = min_max_scaler.fit_transform(x)
@@ -77,41 +79,48 @@ def normalize_ratings(df):
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/cleaned_data.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings.csv'
     data = pd.read_csv(PATH)  # 2019-Nov.csv for November records
+    #data.drop(columns='Unnamed: 0',inplace=True)
     print(data)
 
+
+
+    data['rating'] = data['rating'].apply(lambda x: 5 if (x > 5) else x)
+    #print(data['rating'].value_counts())
+    data.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings2.csv')
+    #lambda x: x * 2 if x < 10 else (x * 3 if x < 20 else x)
+    #lambda (T): if (T > 200): return (200 * exp(-T)); else: return (400 * exp(-T))
+    #lambda (T):    if (T > 200): return (200 * exp(-T)); else: return (400 * exp(-T))
+
+
+
+
+    # df = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_test.csv')
+    # df.drop(columns='Unnamed: 0', inplace=True)
+    # df = df[['event_time','user_id','product_id']]
+    # df.sort_values(by=['user_id','event_time'],inplace=True)
+    # print(df)
+    # df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_test2.csv')
     #get_statistics(data)
 
 
-    user_item_matrix = data.groupby(['user_id', 'product_id']).event_type.value_counts().to_frame()
-    user_item_matrix = pd.DataFrame(data=user_item_matrix)
-    user_item_matrix.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
-    print(user_item_matrix)
-
-    user_item_matrix = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
-    print(user_item_matrix)
-    user_item_matrix.rename(columns={"event_type.1": "rating"}, inplace=True)
-    user_item_matrix['rating'].astype(float)
-    ratings = build_dataset_with_ratings(user_item_matrix, len(user_item_matrix))
-    print(ratings)
-
-
-    """Normalize ratings in 0 to 5 scale"""
+    # user_item_matrix = data.groupby(['user_id', 'product_id']).event_type.value_counts().to_frame()
+    # user_item_matrix = pd.DataFrame(data=user_item_matrix)
+    # user_item_matrix.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
+    # print(user_item_matrix)
+    #
+    # user_item_matrix = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
+    # print(user_item_matrix)
+    # user_item_matrix.rename(columns={"event_type.1": "rating"}, inplace=True)
+    # user_item_matrix['rating'].astype(float)
+    # ratings = build_dataset_with_ratings(user_item_matrix, len(user_item_matrix))
+    # print(ratings)
 
 
 
 
 
-
-
-
-
-
-
-# user_products = df.groupby('user_id').product_id.value_counts()
-# print(user_products)
-# print(type(user_products))
 
 
 
