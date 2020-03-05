@@ -15,7 +15,7 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     Parameters
     --------
     model : A trained GRU4Rec model.
-    train_data : It contains the transactions of the train set. In evaluation phrase, this is used to build item-to-id map.
+    train_data : It contains the transactions of the train set. In evaluation phase, this is used to build item-to-id map.
     test_data : It contains the transactions of the test set. It has one column for session IDs, one for item IDs and one for the timestamp of the events (unix timestamps).
     cut-off : int
         Cut-off value (i.e. the length of the recommendation list; N for recall@N and MRR@N). Defauld value is 20.
@@ -36,16 +36,16 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     '''
     model.predict = False
     # Build itemidmap from train data.
-    print(train_data)
+    #print(train_data)
     itemids = train_data[item_key].unique()
     itemidmap = pd.Series(data=np.arange(len(itemids)), index=itemids)
     
     test_data.sort_values([session_key, time_key], inplace=True)
-    print(test_data)
+    #print(test_data)
     offset_sessions = np.zeros(test_data[session_key].nunique()+1, dtype=np.int32)
     #compute the cumulative sum for the size of each session(per clicks)
     offset_sessions[1:] = test_data.groupby(session_key).size().cumsum()
-    #print(offset_sessions.size)
+    print(offset_sessions.size)
     evaluation_point_count = 0
     mrr, recall = 0.0, 0.0
     if len(offset_sessions) - 1 < batch_size:
@@ -54,28 +54,37 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     maxiter = iters.max()
     start = offset_sessions[iters]
     end = offset_sessions[iters+1]
-    #print(start,end)
     in_idx = np.zeros(batch_size, dtype=np.int32)
     np.random.seed(42)
     while True:
         valid_mask = iters >= 0
+        """valid_mask contains an array of boolean values of the iters. 
+        If sum is zero, all sessions have be accessed so the evaluation stops"""
         if valid_mask.sum() == 0:
             break
         start_valid = start[valid_mask]
+        print('Start valid:{}'.format(start_valid))
+        print('End valid:{}'.format(end[valid_mask]))
+        """minlen --->  minimum length of a session"""
         minlen = (end[valid_mask]-start_valid).min()
+        #print('Minlen:{}'.format(minlen))
         in_idx[valid_mask] = test_data[item_key].values[start_valid]
-        # print(start_valid)
-        # print('\n')
-        # print(minlen)
-        # print('\n')
-        # print(in_idx)
-        # print('\n')
+        print(minlen)
+        print('\n')
+        print(in_idx)
+        print('\n')
         for i in range(minlen-1):
             out_idx = test_data[item_key].values[start_valid+i+1]
+            print('Out_idx:{}'.format(out_idx))
             preds = model.predict_next_batch(iters, in_idx, itemidmap, batch_size)
             preds.fillna(0, inplace=True)
+            print('Predictions:{}'.format(preds))
+            print(type(preds))
             in_idx[valid_mask] = out_idx
+            print('In_idx:{}'.format(in_idx))
+            print(type(in_idx))
             ranks = (preds.values.T[valid_mask].T > np.diag(preds.ix[in_idx].values)[valid_mask]).sum(axis=0) + 1
+            print('Ranks{}'.format(ranks))
             rank_ok = ranks < cut_off
             recall += rank_ok.sum()
             mrr += (1.0 / ranks[rank_ok]).sum()
@@ -85,6 +94,8 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
 
         start = start+minlen-1
         mask = np.arange(len(iters))[(valid_mask) & (end-start<=1)]
+        print('Mask{}'.format(mask))
+        print(type(mask))
         for idx in mask:
             maxiter += 1
             if maxiter >= len(offset_sessions)-1:

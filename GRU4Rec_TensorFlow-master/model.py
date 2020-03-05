@@ -255,6 +255,7 @@ class GRU4Rec:
             Columns: events of the batch; rows: items. Rows are indexed by the item IDs.
 
         '''
+
         if batch != self.batch_size:
             raise Exception('Predict batch size({}) must match train batch size({})'.format(batch, self.batch_size))
         if not self.predict:
