@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 
-def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size=50, session_key='user_id', item_key='product_id', time_key='event_time'):
+def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size=50, session_key='user_session', item_key='product_id', time_key='event_time'):
     
     '''
     Evaluates the GRU4Rec network wrt. recommendation accuracy measured by recall@N and MRR@N.
@@ -39,11 +39,11 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     #print(train_data)
     itemids = train_data[item_key].unique()
     itemidmap = pd.Series(data=np.arange(len(itemids)), index=itemids)
-    
+
     test_data.sort_values([session_key, time_key], inplace=True)
     #print(test_data)
     offset_sessions = np.zeros(test_data[session_key].nunique()+1, dtype=np.int32)
-    #compute the cumulative sum for the size of each session(per clicks)
+    """compute the cumulative sum for the size of each session(per clicks)"""
     offset_sessions[1:] = test_data.groupby(session_key).size().cumsum()
     print(offset_sessions.size)
     evaluation_point_count = 0
@@ -67,35 +67,48 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
         print('End valid:{}'.format(end[valid_mask]))
         """minlen --->  minimum length of a session"""
         minlen = (end[valid_mask]-start_valid).min()
-        #print('Minlen:{}'.format(minlen))
+        print('Minlen:{}'.format(minlen))
         in_idx[valid_mask] = test_data[item_key].values[start_valid]
-        print(minlen)
-        print('\n')
-        print(in_idx)
-        print('\n')
+        # print(minlen)
+        # print('\n')
+        # print(in_idx)
+        # print('\n')
         for i in range(minlen-1):
             out_idx = test_data[item_key].values[start_valid+i+1]
-            print('Out_idx:{}'.format(out_idx))
+            # print('Out_idx:{}'.format(out_idx))
             preds = model.predict_next_batch(iters, in_idx, itemidmap, batch_size)
             preds.fillna(0, inplace=True)
-            print('Predictions:{}'.format(preds))
-            print(type(preds))
+            print('Predictions{}\n:'.format(preds))
             in_idx[valid_mask] = out_idx
-            print('In_idx:{}'.format(in_idx))
-            print(type(in_idx))
+            #print(preds.values.T[valid_mask].T)
+            #print(np.diag(preds.ix[in_idx].values)[valid_mask])
             ranks = (preds.values.T[valid_mask].T > np.diag(preds.ix[in_idx].values)[valid_mask]).sum(axis=0) + 1
-            print('Ranks{}'.format(ranks))
+            # print('Ranks{}'.format(ranks))
             rank_ok = ranks < cut_off
             recall += rank_ok.sum()
             mrr += (1.0 / ranks[rank_ok]).sum()
             evaluation_point_count += len(ranks)
 
-            #if i == 1 : print(preds, in_idx)
+            """Get a dataframe with the top-20 itemids for every event of the batch"""
+            preds = pd.DataFrame(preds)
+            df = pd.DataFrame(columns=preds.columns)
+
+            for i in range(50):
+
+                #sort by prediction value
+                vector = preds[i].sort_values(ascending=False)
+                #get top-20
+                vector = vector.head(20)
+                #pass item ids
+                df[i] = vector.index.values
+
+            print(df)
+
 
         start = start+minlen-1
         mask = np.arange(len(iters))[(valid_mask) & (end-start<=1)]
-        print('Mask{}'.format(mask))
-        print(type(mask))
+        # print('Mask{}'.format(mask))
+        # print(type(mask))
         for idx in mask:
             maxiter += 1
             if maxiter >= len(offset_sessions)-1:

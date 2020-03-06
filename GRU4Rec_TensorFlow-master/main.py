@@ -19,7 +19,7 @@ from sklearn.model_selection import train_test_split
 """Uncomment the dataset the dataset path for experimenting """
 #PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv'
 PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_train2.csv'
-PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_test2.csv'
+PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_test_matching_train.csv'
 #/PATH/TO/rsc15_train_full.txt'
 #'/PATH/TO/rsc15_test.txt'
 
@@ -37,7 +37,8 @@ class Args():
     init_as_normal = False
     reset_after_session = True
     #session_key = 'visitorid'
-    session_key = 'user_id'
+    #session_key = 'user_id'
+    session_key = 'user_session'
     #item_key = 'itemid'
     item_key = 'product_id'
     #time_key = 'timestamp'
@@ -70,10 +71,9 @@ if __name__ == '__main__':
     command_line = parseArgs()
     data = pd.read_csv(PATH_TO_TRAIN, dtype={'product_id': np.int64})
     valid = pd.read_csv(PATH_TO_TEST, dtype={'product_id': np.int64})
+    #valid = valid.iloc[:100000, :]
     #print(data)
-    #valid = data.iloc[90000:, :]
     #valid = data.iloc[90000:100000, :]
-    #data = data.iloc[:90000, :]
     data.drop(columns='Unnamed: 0',axis=1,inplace=True)
     valid.drop(columns='Unnamed: 0',axis=1,inplace=True)
     #valid = pd.read_csv(PATH_TO_TEST, dtype={'movieId': np.int64})
@@ -102,5 +102,5 @@ if __name__ == '__main__':
             gru.fit(data)
         else:
             print("Testing")
-            res = evaluation.evaluate_sessions_batch(gru, data, data)
+            res = evaluation.evaluate_sessions_batch(gru, data, valid)
             print('Recall@20: {}\tMRR@20: {}'.format(res[0], res[1]))
