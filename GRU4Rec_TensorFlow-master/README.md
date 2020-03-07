@@ -1,21 +1,15 @@
 # GRU4Rec_TensorFlow
-TensorFlow implementation of *GRu4Rec*, which was descibed in "Session-based Recommendations With Recurrent Neural Networks". See paper: http://arxiv.org/abs/1511.06939. 
+TensorFlow implementation of *GRU4REC*, which was descibed in "Session-based Recommendations With Recurrent Neural Networks". See paper: http://arxiv.org/abs/1511.06939. 
 
 # Requirements
-Python: 2.7
+Python: 3.6
 
-Pandas < 0.17 
+Pandas 0.24.2 
 
 Numpy 1.12.1 or later
 
 TensorFlow: 0.12.1
 
-# Usage
-Train/Test file should consists of three columns:   
-
-     First column: SessionId  
-     Second column: ItemId  
-     Third column: Timestamps
 
 To train a model with default parameter settings:
 
