@@ -102,5 +102,9 @@ if __name__ == '__main__':
             gru.fit(data)
         else:
             print("Testing")
-            res = evaluation.evaluate_sessions_batch(gru, data, valid)
-            print('Recall@20: {}\tMRR@20: {}'.format(res[0], res[1]))
+            rec , mrr , topN = evaluation.evaluate_sessions_batch(gru, data, valid)
+            print('Recall@20: {}\tMRR@20: {}'.format(rec, mrr))
+            print(topN)
+            topN = pd.DataFrame(topN)
+            """store Top20 products for every user_session in a csv file"""
+            topN.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/topN_preds.csv')
