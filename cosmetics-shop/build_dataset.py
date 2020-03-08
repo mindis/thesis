@@ -79,16 +79,21 @@ def normalize_ratings(df):
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings100k.csv'
     data = pd.read_csv(PATH)  # 2019-Nov.csv for November records
     #data.drop(columns='Unnamed: 0',inplace=True)
     print(data)
 
-
-
+    data['user_id'] = data.groupby('user_id').ngroup()
+    data['product_id'] = data.groupby('product_id').ngroup()
+    print(data)
+    #data.to_csv(PATH)
     data['rating'] = data['rating'].apply(lambda x: 5 if (x > 5) else x)
-    #print(data['rating'].value_counts())
-    data.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings2.csv')
+    print(data['rating'].value_counts())
+    #print(data)
+    # data.drop(columns='brand',inplace=True)
+    data.to_csv(PATH)
+    #data.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings2.csv')
     #lambda x: x * 2 if x < 10 else (x * 3 if x < 20 else x)
     #lambda (T): if (T > 200): return (200 * exp(-T)); else: return (400 * exp(-T))
     #lambda (T):    if (T > 200): return (200 * exp(-T)); else: return (400 * exp(-T))
@@ -111,10 +116,11 @@ if __name__ == "__main__":
     # print(user_item_matrix)
     #
     # user_item_matrix = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_matrix_full.csv')
-    # print(user_item_matrix)
     # user_item_matrix.rename(columns={"event_type.1": "rating"}, inplace=True)
     # user_item_matrix['rating'].astype(float)
-    # ratings = build_dataset_with_ratings(user_item_matrix, len(user_item_matrix))
+    # print(user_item_matrix)
+    # ratings = build_dataset_with_ratings(user_item_matrix, 100000)
+    # ratings.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/ratings100k.csv')
     # print(ratings)
 
 
