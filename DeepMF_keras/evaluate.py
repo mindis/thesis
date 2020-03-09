@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import heapq
+import pandas as pd
 
 _model = None
 _test_ratings = None
@@ -15,43 +16,67 @@ def evaluate_model(model, test_ratings, test_negatives, data_matrix, k):
     global _data_matrix
 
     _model = model
-    _test_ratings = test_ratings
-    _test_negatives = test_negatives
+    _test_ratings = test_ratings #<class 'list'>
+    _test_negatives = test_negatives #<class 'list'>
     _data_matrix = data_matrix
 
+    print(_test_ratings)
+    print(len(_test_ratings))
+    print(_test_negatives)
+
     hits, ndcgs = [], []
+    preds_df = pd.DataFrame(columns=np.arange(len(_test_ratings)))
     for i in range(len(_test_ratings)):
-        (hr, ndcg) = _evaluate_one_rating(i, k=k)
+        (hr, ndcg, preds_df) = _evaluate_one_rating(preds_df, i, k=k)
         hits.append(hr)
         ndcgs.append(ndcg)
-    return hits, ndcgs
+    return hits, ndcgs, preds_df
 
 
-def _evaluate_one_rating(idx, k):
+def _evaluate_one_rating(preds_df, idx, k):
     rating = _test_ratings[idx]
     items = _test_negatives[idx]
     user = rating[0]
+    #user += 1
     gt_item = rating[1]
+    #gt_item += 1
     items.append(gt_item)
+    #print(user,gt_item)
+    #print(_data_matrix)
 
     items_input = []
     users_input = []
     for item in items:
         items_input.append(_data_matrix[:, item])
         users_input.append(_data_matrix[user])
+
     predictions = _model.predict([np.array(users_input), np.array(items_input)],
                                  batch_size=100 + 1,
                                  verbose=0)
-
+    #print('Predictions:{}'.format(predictions))
     map_item_score = {}
+    i = idx
+    #print(list(enumerate(items)))
     for idx, item in enumerate(items):
         map_item_score[item] = predictions[idx]
+
+    map_item_df = pd.DataFrame.from_dict(map_item_score)
+    #print('Map Item Score{}'.format(map_item_df))
+    map_item_df.index = [user]
+    map_item_df = map_item_df.T
+    map_item_df.sort_values(by=int(map_item_df.columns.values),ascending=False,inplace=True)
+    map_item_df = map_item_df.head(20) #get Top-20 item predictions
+    vector = np.array(map_item_df.index.values)
+
+    #print('Index:{}'.format(i))
+
+    preds_df[i] = vector
 
     items.pop()
     rank_list = heapq.nlargest(k, map_item_score, key=map_item_score.get)
     hr = get_hit_ratio(rank_list, gt_item)
     ndcg = get_ndcg(rank_list, gt_item)
-    return hr, ndcg
+    return hr, ndcg, preds_df
 
 
 def get_hit_ratio(rank_list, gt_item):
