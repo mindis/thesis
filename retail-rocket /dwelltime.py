@@ -39,6 +39,8 @@ def join_dwell_reps(df, dt, threshold=2000):
 
 if __name__ == "__main__":
 
+
+
     PATH = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data2.csv'
 
 
@@ -79,8 +81,7 @@ if __name__ == "__main__":
     new_df = df.merge(dw_t,on='index',how='inner')
     new_df = pd.DataFrame(new_df)
     new_df.drop(columns='index',inplace=True)
-    #new_df.to_csv('/home/nick/Desktop/thesis/datasets/retail-rocket/dwelltime.csv')
-
+    new_df.to_csv('/home/nick/Desktop/thesis/datasets/retail-rocket/dwelltime.csv')
 
 
 

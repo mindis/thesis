@@ -27,11 +27,11 @@ def events_explored(path):
 
     events = pd.read_csv(path)
     visitors = events["visitorid"].unique()
-    times2 =[]
-    for i in events['timestamp']:
-        times2.append(datetime.datetime.fromtimestamp(i//1000.0))
-
-    events['timestamp']=times2
+    # times2 =[]
+    # for i in events['timestamp']:
+    #     times2.append(datetime.datetime.fromtimestamp(i//1000.0))
+    #
+    # events['timestamp']=times2
     return events,visitors
 
 def actions_plot(events):

@@ -18,20 +18,20 @@ def clean_dataset(events):
     #print(events.iloc[1])
 
 
-    '''duplicate addtocart rows giving a weight of 5 views & 
-    transaction rows giving a weight of 10 views'''
-    df = events.append([events[events.event.eq('addtocart')]] * 4, ignore_index=True)
-
-    df2 = df.append([df[df.event.eq('transaction')]] * 9, ignore_index=True)
-    df2.sort_values(by=['visitorid', 'timestamp'], inplace=True)
-
-    df2 = pd.DataFrame(df2)
-    df2.drop(axis=1, columns='transactionid', inplace=True)
-
-    print(df2)
+    # '''duplicate addtocart rows giving a weight of 5 views &
+    # transaction rows giving a weight of 10 views'''
+    # df = events.append([events[events.event.eq('addtocart')]] * 4, ignore_index=True)
+    #
+    # df2 = df.append([df[df.event.eq('transaction')]] * 9, ignore_index=True)
+    # df2.sort_values(by=['visitorid', 'timestamp'], inplace=True)
+    #
+    # df2 = pd.DataFrame(df2)
+    # df2.drop(axis=1, columns='transactionid', inplace=True)
+    #
+    # print(df2)
 
     '''delete rare items'''
-    items_freq = pd.DataFrame(df2.itemid.value_counts())
+    items_freq = pd.DataFrame(events.itemid.value_counts())
     items_freq.reset_index(inplace=True)
     items_freq.rename(columns={"index": "itemid", "itemid": "freq"}, inplace=True)
     print(items_freq)
@@ -40,12 +40,12 @@ def clean_dataset(events):
     list = items_freq['itemid']
     print(list)
     # keep only those records with 2 or more actions
-    df2 = df2[~df2['itemid'].isin(list)]
-    print(df2)
+    events = events[~events['itemid'].isin(list)]
+    print(events)
 
     '''keep visitors with >1 & <=30 clicks'''
 
-    visitors_freq = pd.DataFrame(df2.visitorid.value_counts())
+    visitors_freq = pd.DataFrame(events.visitorid.value_counts())
     visitors_freq.reset_index(inplace=True)
     visitors_freq.rename(columns={"index": "visitorid", "visitorid": "freq"}, inplace=True)
     print(visitors_freq)
@@ -54,10 +54,10 @@ def clean_dataset(events):
     list = visitors_freq['visitorid']
     print(list)
     # keep only those records with 2 or more actions
-    df2 = df2[~df2['visitorid'].isin(list)]
-    print(df2)
+    events = events[~events['visitorid'].isin(list)]
+    print(events)
 
-    cleaned_data = pd.DataFrame(data=df2)
+    cleaned_data = pd.DataFrame(data=events)
     cleaned_data.drop(axis=1, columns='event', inplace=True)
 
     return cleaned_data
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
 
     #extract to csv
-    #final_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv')
+    final_df.to_csv(path_or_buf='/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv')
 
 
 

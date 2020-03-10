@@ -162,13 +162,14 @@ if __name__ == '__main__':
     model = dmf.get_model()
     model.summary()
 
-    (hits, ndcgs, preds_df) = evaluate_model(model, dataset.test_ratings, dataset.test_negatives, dataset.data_matrix, topN)
+    (hits, ndcgs, topN_df) = evaluate_model(model, dataset.test_ratings, dataset.test_negatives, dataset.data_matrix, topN)
     hr, ndcg, loss = np.array(hits).mean(), np.array(ndcgs).mean(), -1
     print('Init: HR = %.4f, NDCG = %.4f' % (hr, ndcg))
     logging.info('Init: HR = %.4f, NDCG = %.4f' % (hr, ndcg))
-    print('Predictions{}'.format(preds_df))
+    print('Top-N Product Predictions{}'.format(topN_df))
     best_hr, best_ndcg = hr, ndcg
     best_iter = 0
+    final_df = topN_df
 
     for epoch in range(epochs):
         start = time()
@@ -202,26 +203,28 @@ if __name__ == '__main__':
 
         end = time()
         print('Epoch %d Finished. [%.1f s]' % (epoch + 1, end - start))
-        (hits, ndcgs, preds_df) = evaluate_model(model, dataset.test_ratings, dataset.test_negatives,
+        (hits, ndcgs, topN_df) = evaluate_model(model, dataset.test_ratings, dataset.test_negatives,
                                                  dataset.data_matrix, topN)
-        print('hits:{0}\nndcgs:{1}\n'.format(hits,ndcgs))
+        #print('hits:{0}\nndcgs:{1}\n'.format(hits,ndcgs))
 
         hr, ndcg, loss = np.array(hits).mean(), np.array(ndcgs).mean(), history.history['loss'][0]
 
         print('HR = %.4f, NDCG = %.4f, loss = %.4f [%.1f s]'
               % (hr, ndcg, loss, time() - end))
         logging.info('Epoch %d: HR = %.4f, NDCG = %.4f, loss = %.4f'
-                     % (epoch + 1, hr, ndcg, loss))
+                    % (epoch + 1, hr, ndcg, loss))
 
         if hr > best_hr:
             best_hr, best_ndcg, best_iter = hr, ndcg, epoch + 1
             model.save_weights(model_out_file, overwrite=True)
-            final_df = preds_df
+            #hold the dataframe matching the best epoch
+            final_df = topN_df
+            print(final_df)
 
     print('Finished.\n Best epoch %d: HR = %.4f, NDCG = %.4f' % (best_iter, best_hr, best_ndcg))
     logging.info('Best epoch %d: HR = %.4f, NDCG = %.4f' % (best_iter, best_hr, best_ndcg))
 
-    print('Top-N Products for each user{}'.format(preds_df))
-    preds_df = pd.DataFrame(preds_df)
+    print('Top-N Products for each user{}'.format(final_df))
+    final_df = pd.DataFrame(final_df)
     #preds_df.to_csv('path...')
 

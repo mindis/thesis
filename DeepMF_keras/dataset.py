@@ -9,7 +9,9 @@ class DataSet(object):
     #def __init__(self, path, data_set='retail-rocket'):
         path_sep = os.path.sep
         filename = path + path_sep + data_set + path_sep
-        filename += 'ratings_indexed2.csv'
+        print(filename)
+        #filename += 'ratings100k.csv'
+        filename += 'indexed_ratings.csv'
         data_separator = ','
         # if data_set == 'ml-100k':
         #     filename += 'u.data'
@@ -51,7 +53,7 @@ class DataSet(object):
         return data, num_users, num_items, max_rate
 
     def get_data_matrix(self):
-        mat = np.zeros((self.num_users, self.num_items))
+        mat = np.zeros((self.num_users, self.num_items),dtype = np.float16)
         for line in self.train:
             user, item, rating = line[0], line[1], line[2]
             mat[user, item] = rating

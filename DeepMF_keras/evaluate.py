@@ -20,20 +20,20 @@ def evaluate_model(model, test_ratings, test_negatives, data_matrix, k):
     _test_negatives = test_negatives #<class 'list'>
     _data_matrix = data_matrix
 
-    print(_test_ratings)
-    print(len(_test_ratings))
-    print(_test_negatives)
+    # print(_test_ratings)
+    # print(len(_test_ratings))
+    # print(_test_negatives)
 
     hits, ndcgs = [], []
-    preds_df = pd.DataFrame(columns=np.arange(len(_test_ratings)))
+    topN_df = pd.DataFrame(columns=np.arange(len(_test_ratings)))
     for i in range(len(_test_ratings)):
-        (hr, ndcg, preds_df) = _evaluate_one_rating(preds_df, i, k=k)
+        (hr, ndcg, topN_df) = _evaluate_one_rating(topN_df, i, k=k)
         hits.append(hr)
         ndcgs.append(ndcg)
-    return hits, ndcgs, preds_df
+    return hits, ndcgs, topN_df
 
 
-def _evaluate_one_rating(preds_df, idx, k):
+def _evaluate_one_rating(topN_df, idx, k):
     rating = _test_ratings[idx]
     items = _test_negatives[idx]
     user = rating[0]
@@ -70,13 +70,13 @@ def _evaluate_one_rating(preds_df, idx, k):
 
     #print('Index:{}'.format(i))
 
-    preds_df[i] = vector
+    topN_df[i] = vector
 
     items.pop()
     rank_list = heapq.nlargest(k, map_item_score, key=map_item_score.get)
     hr = get_hit_ratio(rank_list, gt_item)
     ndcg = get_ndcg(rank_list, gt_item)
-    return hr, ndcg, preds_df
+    return hr, ndcg, topN_df
 
 
 def get_hit_ratio(rank_list, gt_item):
