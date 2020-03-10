@@ -9,13 +9,16 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from collections import defaultdict
 
-from surprise import SVD
-from surprise import SVDpp
+
+from surprise import SVD , SVDpp,SlopeOne, NMF, NormalPredictor, KNNBaseline, KNNBasic, KNNWithMeans,\
+                  KNNWithZScore, BaselineOnly, CoClustering
 from surprise import Dataset
 from surprise import Reader
 from surprise.model_selection import KFold
 from surprise.model_selection import cross_validate
 from surprise import accuracy
+import pandas as pd
+import numpy as np
 
 
 def get_top_n(predictions, n=10):
@@ -49,26 +52,31 @@ file_path = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_rati
 reader = Reader(line_format='user item rating', sep=',')
 data = Dataset.load_from_file(file_path, reader=reader)
 
-kf = KFold(n_splits=10)
-trainset = data.build_full_trainset()
+#kf = KFold(n_splits=10)
 #algo = SVD()
-algo = SVDpp()
-#algo.fit(trainset)
-for trainset, testset in kf.split(data):
-
-    # train and test algorithm.
-    algo.fit(trainset)
-    predictions = algo.test(testset)
-
-    # Compute and print Root Mean Squared Error
-    accuracy.rmse(predictions, verbose=True)
+#algo = SVDpp()
+algo = KNNBaseline()
+trainset = data.build_full_trainset()
+algo.fit(trainset)
+# for trainset, testset in kf.split(data):
+#
+#     # train and test algorithm.
+#     algo.fit(trainset)
+#     predictions = algo.test(testset)
+#
+#     # Compute and print Root Mean Squared Error
+#     accuracy.rmse(predictions, verbose=True)
 # Than predict ratings for all pairs (u, i) that are NOT in the training set.
-# testset = trainset.build_anti_testset()
-# predictions = algo.test(testset)
+testset = trainset.build_anti_testset()
+predictions = algo.test(testset)
 
 top_n = get_top_n(predictions, n=10)
+df = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k.csv')
+print(df['user_id'].nunique())
 #cross_validate(BaselineOnly(), data, verbose=True)
-
+topN_df = pd.DataFrame()
 # Print the recommended items for each user
 for uid, user_ratings in top_n.items():
-    print(uid, [iid for (iid, _) in user_ratings])
+    topN_df[uid] = np.array([iid for (iid, _) in user_ratings])
+    print(topN_df)
+    #print(uid, [iid for (iid, _) in user_ratings])
