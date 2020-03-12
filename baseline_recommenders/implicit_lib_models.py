@@ -6,7 +6,7 @@ from scipy.sparse import csr_matrix
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/user_item_brand.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit_feedback_dataset.csv'
     data = pd.read_csv(PATH)
     print(data)
     user_key = 'user_id'
@@ -23,20 +23,21 @@ if __name__ == "__main__":
     user_items = csr_data.T.tocsr()
     print(user_items)
 
-    """Personalize predictions by selecting userID"""
-    preferred_userID = 8846226
-    userID = user_lookup.index.get_loc(preferred_userID)
-    recommendations = model.recommend(userID, user_items)
-    recommendations = pd.DataFrame(recommendations,columns=['item','score'])
-    recommendations['item'] = recommendations.item.astype(str)
-    """Get Top-10 brands for user = userID"""
-    recommendations = recommendations.merge(item_lookup,on='item')
-    print('Top-10 Product recommendations for user {0} :\n {1}'.format(preferred_userID,recommendations))
 
     top_rec_4all = model.recommend_all(user_items)
     top_rec_4all = top_rec_4all.T
-    top_rec_4all = pd.DataFrame(data=top_rec_4all)
+    top_rec_4all = pd.DataFrame(data=top_rec_4all,columns=user_lookup.index.categories)
     print(top_rec_4all)
+
+    """Personalize predictions by selecting userID"""
+    preferred_userID = 12055855
+    userID = user_lookup.index.get_loc(preferred_userID)
+    recommendations = model.recommend(userID, user_items)
+    recommendations = pd.DataFrame(recommendations, columns=['item', 'score'])
+    recommendations['item'] = recommendations.item.astype(str)
+    """Get Top-10 brands for user = userID"""
+    recommendations = recommendations.merge(item_lookup, on='item')
+    print('Top-10 Product recommendations for user {0} :\n {1}'.format(preferred_userID, recommendations))
 
 
 
