@@ -16,7 +16,10 @@ if __name__ == "__main__":
 
     """initialize a model"""
     #model = implicit.als.AlternatingLeastSquares(factors=50)
-    model = implicit.bpr.BayesianPersonalizedRanking(factors=50)
+    #model = implicit.bpr.BayesianPersonalizedRanking(factors=50)
+    model = implicit.lmf.LogisticMatrixFactorization(factors=100)
+    #model = implicit.approximate_als.AnnoyAlternatingLeastSquares()
+
     # train the model on a sparse matrix of item/user/confidence weights
     model.fit(csr_data)
     # recommend items for a user

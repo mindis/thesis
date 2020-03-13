@@ -38,7 +38,7 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
     # # Drop any rows that have 0 purchases
     # data = data.loc[data.purchase_cnt != 0]
 
-    # Create lists of all users, mcats and their purchase counts
+    # Create lists of all users, items and their event_strength values
     users = list(np.sort(data.user.unique()))
     items = list(np.sort(data.item.unique()))
     #brands = list(np.sort(data.brand_id.unique()))
@@ -49,7 +49,7 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
     rows = data.user.astype(int)
     cols = data.item.astype(int)
     #print(rows,cols)
-    # Create a sparse matrix for our users and brands containing number of purchases
+    # Create a sparse matrix for our users and brands containing eventStrength values
     data_sparse_new = csr_matrix((actions, (cols, rows)), shape=(len(items), len(users)))
 
     return data_sparse_new, user_lookup, item_lookup
