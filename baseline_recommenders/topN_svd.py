@@ -57,15 +57,15 @@ data = Dataset.load_from_file(file_path, reader=reader)
 #algo = SVDpp()
 #algo = KNNBaseline()
 
-for algorithm in [SVD(), SVDpp(), SlopeOne(), NMF(), NormalPredictor(), KNNBaseline(), KNNBasic(), KNNWithMeans(),
-                  KNNWithZScore(), BaselineOnly(), CoClustering()]:
+# for algorithm in [SVD(), SVDpp(), SlopeOne(), NMF(), NormalPredictor(), KNNBaseline(), KNNBasic(), KNNWithMeans(),
+#                   KNNWithZScore(), BaselineOnly(), CoClustering()]:
 
-    algo = algorithm
-    trainset = data.build_full_trainset()
-    algo.fit(trainset)
-    testset = trainset.build_anti_testset()
-    predictions = algo.test(testset)
-    print('{0} RMSE: {1:.2f}'.format(algorithm, accuracy.rmse(predictions)))
+algo = SVDpp()
+trainset = data.build_full_trainset()
+algo.fit(trainset)
+testset = trainset.build_anti_testset()
+predictions = algo.test(testset)
+print('RMSE: {0:.2f}'.format(accuracy.rmse(predictions)))
 # for trainset, testset in kf.split(data):
 #
 #     # train and test algorithm.
@@ -76,16 +76,14 @@ for algorithm in [SVD(), SVDpp(), SlopeOne(), NMF(), NormalPredictor(), KNNBasel
 #     accuracy.rmse(predictions, verbose=True)
 # Than predict ratings for all pairs (u, i) that are NOT in the training set.
 
-
-
-# top_n = get_top_n(predictions, n=10)
+top_n = get_top_n(predictions, n=10)
 # df = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k.csv')
 # print(df['user_id'].nunique())
 # #cross_validate(BaselineOnly(), data, verbose=True)
-# topN_df = pd.DataFrame()
-# # Print the recommended items for each user
-# for uid, user_ratings in top_n.items():
-#     topN_df[uid] = np.array([iid for (iid, _) in user_ratings])
-#     #print(uid, [iid for (iid, _) in user_ratings])
+topN_df = pd.DataFrame()
+# Print the recommended items for each user
+for uid, user_ratings in top_n.items():
+     topN_df[uid] = np.array([iid for (iid, _) in user_ratings])
+     #print(uid, [iid for (iid, _) in user_ratings])
 #
-# print(topN_df)
+print(topN_df)

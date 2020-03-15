@@ -6,13 +6,6 @@ from scipy.sparse import spdiags
 from scipy.sparse import diags
 from scipy.sparse.linalg import spsolve
 
-
-
-# # Drop NaN columns
-# data = raw_data.dropna()
-# data = data.copy()
-#
-# # Create a numeric user_id and brand_id column
 def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
 
     data[user_key] = data[user_key].astype("category")

@@ -6,13 +6,14 @@ from scipy.sparse import csr_matrix
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit_feedback_dataset.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_dataset.csv'
     data = pd.read_csv(PATH)
     print(data)
     user_key = 'user_id'
     item_key = 'product_id'
     csr_data, user_lookup, item_lookup = create_sparse_matrix(data,user_key,item_key)
     print(csr_data)
+    print(type(csr_data))
 
     """initialize a model"""
     #model = implicit.als.AlternatingLeastSquares(factors=50)
