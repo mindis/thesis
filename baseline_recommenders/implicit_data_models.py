@@ -1,12 +1,12 @@
 import implicit
 import pandas as pd
-from implicit_data_rec import create_sparse_matrix
+from create_sparse_matrix import create_sparse_matrix
 from scipy.sparse import csr_matrix
 
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_dataset.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv'
     data = pd.read_csv(PATH)
     print(data)
     user_key = 'user_id'
@@ -16,9 +16,10 @@ if __name__ == "__main__":
     print(type(csr_data))
 
     """initialize a model"""
+    model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
     #model = implicit.als.AlternatingLeastSquares(factors=50)
     #model = implicit.bpr.BayesianPersonalizedRanking(factors=50)
-    model = implicit.lmf.LogisticMatrixFactorization(factors=100)
+    #model = implicit.lmf.LogisticMatrixFactorization(factors=100)
     #model = implicit.approximate_als.AnnoyAlternatingLeastSquares()
 
     # train the model on a sparse matrix of item/user/confidence weights
