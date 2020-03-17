@@ -11,7 +11,7 @@ class DataSet(object):
         filename = path + path_sep + data_set + path_sep
         print(filename)
         #filename += 'ratings100k.csv'
-        filename += 'indexed_ratings.csv'
+        filename += 'implicit-data/indexed_implicit_ratings.csv'
         data_separator = ','
         # if data_set == 'ml-100k':
         #     filename += 'u.data'

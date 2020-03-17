@@ -51,11 +51,8 @@ def get_top_n(predictions, n=10):
 file_path = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k_surprise.csv'
 reader = Reader(line_format='user item rating', sep=',')
 data = Dataset.load_from_file(file_path, reader=reader)
-
 #kf = KFold(n_splits=10)
-#algo = SVD()
-#algo = SVDpp()
-#algo = KNNBaseline()
+
 
 # for algorithm in [SVD(), SVDpp(), SlopeOne(), NMF(), NormalPredictor(), KNNBaseline(), KNNBasic(), KNNWithMeans(),
 #                   KNNWithZScore(), BaselineOnly(), CoClustering()]:

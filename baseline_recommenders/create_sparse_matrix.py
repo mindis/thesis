@@ -47,4 +47,3 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
 
     return data_sparse_new, user_lookup, item_lookup
 
-

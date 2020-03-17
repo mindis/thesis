@@ -15,7 +15,7 @@ if __name__ == "__main__":
     print(csr_data)
     print(type(csr_data))
 
-    """initialize a model"""
+    """initialize a model --- choose a model"""
     model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
     #model = implicit.als.AlternatingLeastSquares(factors=50)
     #model = implicit.bpr.BayesianPersonalizedRanking(factors=50)
