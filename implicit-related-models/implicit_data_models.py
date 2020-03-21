@@ -1,16 +1,18 @@
 import implicit
 import pandas as pd
+import numpy as np
 from create_sparse_matrix import create_sparse_matrix
 from scipy.sparse import csr_matrix
 
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_dataset.csv'
     data = pd.read_csv(PATH)
     print(data)
     user_key = 'user_id'
     item_key = 'product_id'
+
     csr_data, user_lookup, item_lookup = create_sparse_matrix(data,user_key,item_key)
     print(csr_data)
     print(type(csr_data))
@@ -43,7 +45,6 @@ if __name__ == "__main__":
     """Get Top-10 brands for user = userID"""
     recommendations = recommendations.merge(item_lookup, on='item')
     print('Top-10 Product recommendations for user {0} :\n {1}'.format(preferred_userID, recommendations))
-
 
 
 

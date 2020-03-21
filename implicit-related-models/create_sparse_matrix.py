@@ -13,7 +13,7 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
     #data['brand'] = data['brand'].astype("category")
     data['user'] = data[user_key].cat.codes
     data['item'] = data[item_key].cat.codes
-    print(data)
+    #print(data)
 
     # Create a lookup frame so we can get the brand names back in
     # readable form later.
@@ -26,8 +26,8 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
     item_lookup['item'] = item_lookup.item.astype(str)
     print(user_lookup,item_lookup)
 
-    # data = data.drop(['brand','event_type',user_key,item_key], axis=1)
-    # print(data)
+    data = data.drop([user_key,item_key], axis=1)
+    print(data)
     # # Drop any rows that have 0 purchases
     # data = data.loc[data.purchase_cnt != 0]
 
@@ -36,6 +36,7 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
     items = list(np.sort(data.item.unique()))
     #brands = list(np.sort(data.brand_id.unique()))
     actions = list(data.eventStrength)
+    #actions = list(data.rating)
 
     #print(users,brands,actions)
     # Get the rows and columns for our new matrix
