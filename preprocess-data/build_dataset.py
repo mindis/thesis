@@ -71,3 +71,28 @@ if __name__ == "__main__":
 
     PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/2019-Oct.csv'
     data = pd.read_csv(PATH)
+
+    """Cosmetics e-shop"""
+    userkey = 'user_id'  # or 'user_session'
+    itemkey = 'product_id'
+    timekey = 'event_time'
+    brandkey = 'brand'
+
+    data = data[data.event_type != 'remove_from_cart']
+    data.drop(columns=['price', 'category_id', 'category_code'], inplace=True)
+    data = data.dropna(subset=['brand'])
+
+
+    # print(data)
+    print(data.shape)
+    data = clean_dataset(data,userkey,itemkey,timekey)
+    # print(data)
+    print(data.shape)
+
+    #BUILD IMPLICIT RATINGS
+    ratings_df = build_dataset_with_ratings(data, userkey, itemkey)
+    print(ratings_df)
+    ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv')
+
+    ratings_df_thr5 = threshold_rating(ratings_df)
+    ratings_df_thr5.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings_thr5.csv')
