@@ -34,8 +34,6 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
 
     #data = data.drop(['brand','event_type',user_key,item_key], axis=1)
     #print(data)
-    # # Drop any rows that have 0 purchases
-    # data = data.loc[data.purchase_cnt != 0]
 
     # Create lists of all users, items and their event_strength values
     users = list(np.sort(data.user.unique()))
@@ -57,8 +55,7 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
 
 if __name__ == "__main__":
 
-    #TRAIN_PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_dataset.csv'
-    TRAIN_PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv'
+    TRAIN_PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings_thr5.csv'
     #TEST_PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_testdata.csv'
 
     traindata = pd.read_csv(TRAIN_PATH)
@@ -82,17 +79,21 @@ if __name__ == "__main__":
     print(user_items_train.shape)
     #print(user_items_test.shape)
 
-
+    print("Splitting the data into train/test set...\n")
     train,test = cross_validation.random_train_test_split(user_items_train)
     # print(train,test)
     # print(train.shape(),test.shape())
 
     model1 = LightFM(learning_rate=0.05, loss='bpr')
     model2 = LightFM(learning_rate=0.05, loss='warp')
+
+    print("Fitting models of BPR & WARP ranking losses...\n")
     model1.fit(train,epochs=10)
     model2.fit(train,epochs=10)
     #ranks = model.predict(user_items_train,num_threads=1)
     #print(ranks)
+
+    print("Evaluating methods...\n")
 
     train_recall1_10 = recall_at_k(model1, train, k=10).mean()
     test_recall1_10 = recall_at_k(model1, test, k=10).mean()
