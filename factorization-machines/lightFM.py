@@ -93,6 +93,8 @@ if __name__ == "__main__":
     #ranks = model.predict(user_items_train,num_threads=1)
     #print(ranks)
 
+    res = model1.predict_rank(test)
+    print(res)
     print("Evaluating methods...\n")
 
     train_recall1_10 = recall_at_k(model1, train, k=10).mean()

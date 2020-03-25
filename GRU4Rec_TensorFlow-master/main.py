@@ -18,8 +18,8 @@ from sklearn.model_selection import train_test_split
 
 """Uncomment the dataset the dataset path for experimenting """
 #PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv'
-PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_train2.csv'
-PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn_test_matching_train.csv'
+PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_train2.csv'
+PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_test_matching_train.csv'
 #/PATH/TO/rsc15_train_full.txt'
 #'/PATH/TO/rsc15_test.txt'
 
@@ -57,7 +57,7 @@ def parseArgs():
     parser.add_argument('--size', default=100, type=int)
     parser.add_argument('--epoch', default=3, type=int)
     parser.add_argument('--lr', default=0.001, type=float)
-    parser.add_argument('--train', default=0, type=int)
+    parser.add_argument('--train', default=1, type=int)
     parser.add_argument('--test', default=2, type=int)
     parser.add_argument('--hidden_act', default='tanh', type=str)
     parser.add_argument('--final_act', default='softmax', type=str)
