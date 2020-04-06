@@ -71,6 +71,15 @@ class BannerProductViewSet(viewsets.ModelViewSet):
         queryset.delete()
         return Response(status=status.HTTP_200_OK)
 
+    def update(self, request, *args, **kwargs):
+        # partial = kwargs.pop('partial', False)
+        # instance = self.get_object()
+        serializer = ProductInteractionsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
 class TopNBannersViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product interactions to be viewed or edited.
