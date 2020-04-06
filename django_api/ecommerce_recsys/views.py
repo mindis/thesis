@@ -30,9 +30,25 @@ class ProductInteractionsViewSet(viewsets.ModelViewSet):
     """DELETE whole model"""
     @action(methods=['delete'], detail=False)
     def delete(self, request):
+
         queryset = ProductInteractions.objects.all()
         queryset.delete()
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+    #@action(methods=['put'],detail=False)
+    def update(self, request, *args, **kwargs):
+        # partial = kwargs.pop('partial', False)
+        # instance = self.get_object()
+        serializer = ProductInteractionsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        # serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        # serializer.is_valid(raise_exception=True)
+        # self.perform_update(serializer)
 
 
 class BannerProductViewSet(viewsets.ModelViewSet):
@@ -51,7 +67,7 @@ class BannerProductViewSet(viewsets.ModelViewSet):
     """DELETE whole model"""
     @action(methods=['delete'], detail=False)
     def delete(self, request):
-        queryset = ProductInteractions.objects.all()
+        queryset = BannerProduct.objects.all()
         queryset.delete()
         return Response(status=status.HTTP_200_OK)
 
