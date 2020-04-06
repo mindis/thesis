@@ -1,5 +1,7 @@
 from django.shortcuts import render
 import json
+import csv
+from django.http import HttpResponse
 from django.http import JsonResponse
 from ecommerce_recsys.models import ProductInteractions, BannerProduct, TopNBanners
 from ecommerce_recsys.serializers import ProductInteractionsSerializer, BannerProductSerializer, TopNBannersSerializer
@@ -86,6 +88,20 @@ class TopNBannersViewSet(viewsets.ModelViewSet):
     """
     queryset = TopNBanners.objects.all()
     serializer_class = TopNBannersSerializer
+
+
+def export(request):
+    response = HttpResponse(content_type='text/csv')
+
+    writer = csv.writer(response)
+    writer.writerow(['user_id', 'product_id', 'timestamp'])
+
+    for record in ProductInteractions.objects.all().values_list('user_id', 'product_id', 'timestamp'):
+        writer.writerow(record)
+
+    response['Content-Disposition'] = 'attachment; filename="user_product.csv"'
+
+    return response
 
 # class BannerProductView(APIView):
 #     """
