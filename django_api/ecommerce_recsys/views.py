@@ -80,9 +80,6 @@ class TopNBannersViewSet(viewsets.ModelViewSet):
 
 
 
-
-    # @action(detail=True, methods=['post'])
-
 # class ExampleView(APIView):
 #     """
 #     A view that can accept POST requests with JSON content.

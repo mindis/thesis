@@ -1,4 +1,3 @@
-from rest_framework_json_api import serializers
 from rest_framework import serializers
 from ecommerce_recsys.models import ProductInteractions, BannerProduct, TopNBanners
 
