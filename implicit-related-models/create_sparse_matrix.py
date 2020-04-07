@@ -35,8 +35,8 @@ def create_sparse_matrix(data,user_key = 'user_id',item_key='product_id'):
     users = list(np.sort(data.user.unique()))
     items = list(np.sort(data.item.unique()))
     #brands = list(np.sort(data.brand_id.unique()))
-    actions = list(data.eventStrength)
-    #actions = list(data.rating)
+    #actions = list(data.eventStrength)
+    actions = list(data.rating)
 
     #print(users,brands,actions)
     # Get the rows and columns for our new matrix

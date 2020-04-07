@@ -69,7 +69,7 @@ def train_test_split(ratings, train_percentage=0.8):
 
 if __name__ == '__main__':
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_dataset.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv'
     data = pd.read_csv(PATH)
     userkey = 'user_id'
     itemkey = 'product_id'
@@ -123,8 +123,8 @@ if __name__ == '__main__':
     #print(user_lookup,item_lookup)
 
     """initialize a model --- choose a model"""
-    model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
-    #model = implicit.als.AlternatingLeastSquares(factors=50)
+    #model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
+    model = implicit.als.AlternatingLeastSquares(factors=50)
     #model = implicit.bpr.BayesianPersonalizedRanking(factors=100)
     #model = implicit.lmf.LogisticMatrixFactorization(factors=100)
     #model = implicit.approximate_als.AnnoyAlternatingLeastSquares()

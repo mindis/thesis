@@ -2,12 +2,13 @@ import implicit
 import pandas as pd
 import numpy as np
 from create_sparse_matrix import create_sparse_matrix
+import time
 from scipy.sparse import csr_matrix
-
+from implicit.evaluation import precision_at_k , ndcg_at_k,train_test_split
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_feedback_dataset.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_binarized.csv'
     data = pd.read_csv(PATH)
     print(data)
     user_key = 'user_id'
@@ -18,20 +19,40 @@ if __name__ == "__main__":
     print(type(csr_data))
 
     """initialize a model --- choose a model"""
-    model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
-    #model = implicit.als.AlternatingLeastSquares(factors=50)
+    #model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
+    model = implicit.als.AlternatingLeastSquares(factors=50)
+    # model = implicit.als.AlternatingLeastSquares(
+    #     factors=32,
+    #     regularization=0.0,
+    #     # use_cg=True,
+    #     use_cg=False,
+    #     iterations=3,
+    #     calculate_training_loss=True,
+    #     num_threads=8)
     #model = implicit.bpr.BayesianPersonalizedRanking(factors=50)
     #model = implicit.lmf.LogisticMatrixFactorization(factors=100)
     #model = implicit.approximate_als.AnnoyAlternatingLeastSquares()
 
-    # train the model on a sparse matrix of item/user/confidence weights
-    model.fit(csr_data)
-    # recommend items for a user
     user_items = csr_data.T.tocsr()
+    train, test = train_test_split(user_items)
+    # train the model on a sparse matrix of item/user/confidence weights
+    start_time = time.time()
+    model.fit(csr_data)
+    print("--- %s seconds ---" % (time.time() - start_time))
+
+    # recommend items for a user
     print(user_items)
 
 
-    top_rec_4all = model.recommend_all(user_items)
+
+
+    precision = precision_at_k(model, train, test, K=20)
+    ndcg = ndcg_at_k(model, train, test, K=20)
+
+    print('Precision@20: {0}\n NDCG@20: {1}\n'.format(precision, ndcg))
+
+
+    top_rec_4all = model.recommend_all(test)
     top_rec_4all = top_rec_4all.T
     top_rec_4all = pd.DataFrame(data=top_rec_4all,columns=user_lookup.index.categories)
     print(top_rec_4all)

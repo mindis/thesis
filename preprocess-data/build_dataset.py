@@ -9,12 +9,14 @@ from clean_data import clean_dataset
 
 def build_dataset_for_rnn(df,userkey,timekey):
 
-    '''duplicate addtocart rows giving a weight of 5 views &
-    transaction rows giving a weight of 10 views'''
+    '''duplicate * (weight of views) addtocart and purchase rows '''
 
-    df = df.append([df[df.event_type.eq('cart')]] * 2, ignore_index=True)
+    CART_WEIGHT = 2
+    PURCHASE_WEIGHT = 4
 
-    df = df.append([df[df.event_type.eq('purchase')]] * 4, ignore_index=True)
+    df = df.append([df[df.event_type.eq('cart')]] * CART_WEIGHT, ignore_index=True)
+
+    df = df.append([df[df.event_type.eq('purchase')]] * PURCHASE_WEIGHT, ignore_index=True)
     df.sort_values(by=[userkey, timekey], inplace=True)
 
     df = pd.DataFrame(df)
@@ -83,7 +85,6 @@ if __name__ == "__main__":
     data = data.dropna(subset=['brand'])
 
 
-    # print(data)
     print(data.shape)
     data = clean_dataset(data,userkey,itemkey,timekey)
     # print(data)
@@ -92,7 +93,11 @@ if __name__ == "__main__":
     #BUILD IMPLICIT RATINGS
     ratings_df = build_dataset_with_ratings(data, userkey, itemkey)
     print(ratings_df)
-    ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv')
+    # ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv')
+    #
+    # ratings_df_thr5 = threshold_rating(ratings_df)
+    # ratings_df_thr5.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings_thr5.csv')
 
-    ratings_df_thr5 = threshold_rating(ratings_df)
-    ratings_df_thr5.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings_thr5.csv')
+    # #binarize_interactions
+    # ratings_df['rating'] = 1
+    # ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_binarized.csv')
