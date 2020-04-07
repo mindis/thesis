@@ -31,6 +31,7 @@ router.register(r'banners-recommendation', views.TopNBannersViewSet)
 # ]
 urlpatterns = [
     path('', include(router.urls)),
-    path('export/', views.export)
+    path('export/user-product', views.export_user_product),
+    path('export/banner-product',views.export_banner_product)
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

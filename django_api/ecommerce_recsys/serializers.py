@@ -3,8 +3,6 @@ from ecommerce_recsys.models import ProductInteractions, BannerProduct, TopNBann
 
 class ProductInteractionsSerializer(serializers.HyperlinkedModelSerializer):
 
-    # def create(self, validated_data):
-
     class Meta:
         model = ProductInteractions
         fields = ('user_id', 'product_id', 'timestamp')

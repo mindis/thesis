@@ -90,7 +90,8 @@ class TopNBannersViewSet(viewsets.ModelViewSet):
     serializer_class = TopNBannersSerializer
 
 
-def export(request):
+def export_user_product(request):
+
     response = HttpResponse(content_type='text/csv')
 
     writer = csv.writer(response)
@@ -100,6 +101,21 @@ def export(request):
         writer.writerow(record)
 
     response['Content-Disposition'] = 'attachment; filename="user_product.csv"'
+
+    return response
+
+
+def export_banner_product(request):
+
+    response = HttpResponse(content_type='text/csv')
+
+    writer = csv.writer(response)
+    writer.writerow(['banner_id', 'product_id'])
+
+    for record in BannerProduct.objects.all().values_list('banner_id', 'product_id'):
+        writer.writerow(record)
+
+    response['Content-Disposition'] = 'attachment; filename="banner_product.csv"'
 
     return response
 
