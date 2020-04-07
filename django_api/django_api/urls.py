@@ -26,12 +26,11 @@ router.register(r'interactions', views.ProductInteractionsViewSet)
 router.register(r'relations', views.BannerProductViewSet)
 router.register(r'banners-recommendation', views.TopNBannersViewSet)
 
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-# ]
+
 urlpatterns = [
     path('', include(router.urls)),
     path('export/user-product', views.export_user_product),
-    path('export/banner-product',views.export_banner_product)
+    path('export/banner-product',views.export_banner_product),
+    path('admin/', admin.site.urls)
     #path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
