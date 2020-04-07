@@ -71,28 +71,40 @@ def normalize_ratings(df):
 
 if __name__ == "__main__":
 
-    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/2019-Oct.csv'
+    """e-Pharmacy data"""
+    PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/users_products.csv'
     data = pd.read_csv(PATH)
+    userkey = 'user_id'
+    itemkey = 'product_id'
+    timekey = 'timestamp'
 
-    """Cosmetics e-shop"""
+    """
+    Cosmetics e-shop
+    PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/2019-Oct.csv'
     userkey = 'user_id'  # or 'user_session'
     itemkey = 'product_id'
     timekey = 'event_time'
     brandkey = 'brand'
-
+    
     data = data[data.event_type != 'remove_from_cart']
     data.drop(columns=['price', 'category_id', 'category_code'], inplace=True)
     data = data.dropna(subset=['brand'])
+    """
 
-
+    # STEP 1 --- CLEAN DATASET
     print(data.shape)
+    print(data)
     data = clean_dataset(data,userkey,itemkey,timekey)
-    # print(data)
     print(data.shape)
+    print(data)
 
-    #BUILD IMPLICIT RATINGS
-    ratings_df = build_dataset_with_ratings(data, userkey, itemkey)
-    print(ratings_df)
+    data = pd.DataFrame(data)
+    data.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/cleaned_users_products.csv')
+    # STEP 2 --- BUILD DATASET
+    #ratings_df = build_dataset_with_ratings(data, userkey, itemkey)
+    #rnn_df = build_dataset_for_rnn(data,userkey,timekey)
+    #print(ratings_df)
+
     # ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv')
     #
     # ratings_df_thr5 = threshold_rating(ratings_df)
