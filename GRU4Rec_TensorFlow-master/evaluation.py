@@ -42,12 +42,13 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     #print(train_data)
     itemids = train_data[item_key].unique()
     itemidmap = pd.Series(data=np.arange(len(itemids)), index=itemids)
+    print(itemidmap)
 
     test_data.sort_values([session_key, time_key], inplace=True)
     """Build sessionidmap from test data."""
     sessionids = test_data[session_key].unique()
     sessionidmap = pd.Series(data=np.arange(len(sessionids)), index=sessionids)
-    #print(sessionidmap)
+    print(sessionidmap)
     topN_df = pd.DataFrame(columns=sessionidmap.index.values)
 
     offset_sessions = np.zeros(test_data[session_key].nunique()+1, dtype=np.int32)

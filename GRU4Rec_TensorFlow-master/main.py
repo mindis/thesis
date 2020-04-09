@@ -17,9 +17,9 @@ import evaluation
 from sklearn.model_selection import train_test_split
 
 """Uncomment the dataset the dataset path for experimenting """
-#PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/retail-rocket/preprocessed_data.csv'
-PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_train2.csv'
-PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_test_matching_train.csv'
+PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_train_indexed.csv'
+#PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_train2.csv'
+PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_test_indexed.csv'
 #/PATH/TO/rsc15_train_full.txt'
 #'/PATH/TO/rsc15_test.txt'
 
@@ -37,12 +37,12 @@ class Args():
     init_as_normal = False
     reset_after_session = True
     #session_key = 'visitorid'
-    #session_key = 'user_id'
-    session_key = 'user_session'
+    session_key = 'user_id'
+    #session_key = 'user_session'
     #item_key = 'itemid'
     item_key = 'product_id'
-    #time_key = 'timestamp'
-    time_key = 'event_time'
+    time_key = 'timestamp'
+    #time_key = 'event_time'
     grad_cap = 0
     test_model = 2
     checkpoint_dir = './checkpoint'
@@ -57,7 +57,7 @@ def parseArgs():
     parser.add_argument('--size', default=100, type=int)
     parser.add_argument('--epoch', default=3, type=int)
     parser.add_argument('--lr', default=0.001, type=float)
-    parser.add_argument('--train', default=1, type=int)
+    parser.add_argument('--train', default=0, type=int)
     parser.add_argument('--test', default=2, type=int)
     parser.add_argument('--hidden_act', default='tanh', type=str)
     parser.add_argument('--final_act', default='softmax', type=str)
@@ -69,14 +69,15 @@ def parseArgs():
 
 if __name__ == '__main__':
     command_line = parseArgs()
-    data = pd.read_csv(PATH_TO_TRAIN, dtype={'product_id': np.int64})
-    valid = pd.read_csv(PATH_TO_TEST, dtype={'product_id': np.int64})
+    #data = pd.read_csv(PATH_TO_TRAIN, dtype={'product_id': np.int64})
+    data = pd.read_csv(PATH_TO_TRAIN)
+    #valid = pd.read_csv(PATH_TO_TEST, dtype={'product_id': np.int64})
+    valid = pd.read_csv(PATH_TO_TEST)
     #valid = valid.iloc[:100000, :]
-    #print(data)
     #valid = data.iloc[90000:100000, :]
     data.drop(columns='Unnamed: 0',axis=1,inplace=True)
     valid.drop(columns='Unnamed: 0',axis=1,inplace=True)
-    #valid = pd.read_csv(PATH_TO_TEST, dtype={'movieId': np.int64})
+    print(data,valid)
     #data, valid = train_test_split(data, random_state=42)
     args = Args()
     #args.n_items = len(data['movieId'].unique())
@@ -102,9 +103,10 @@ if __name__ == '__main__':
             gru.fit(data)
         else:
             print("Testing")
-            rec , mrr , topN = evaluation.evaluate_sessions_batch(gru, data, valid)
+            rec , mrr , topN = evaluation.evaluate_sessions_batch(gru, data, valid,session_key='user_id', item_key='product_id', time_key='timestamp')
             print('Recall@20: {}\tMRR@20: {}'.format(rec, mrr))
             print(topN)
             topN = pd.DataFrame(topN)
             """store Top20 products for every user_session in a csv file"""
-            topN.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/topN_preds.csv')
+            #topN.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/topN_preds.csv')
+            topN.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/topN_preds.csv')
