@@ -48,7 +48,7 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     """Build sessionidmap from test data."""
     sessionids = test_data[session_key].unique()
     sessionidmap = pd.Series(data=np.arange(len(sessionids)), index=sessionids)
-    print(sessionidmap)
+    #print(sessionidmap)
     topN_df = pd.DataFrame(columns=sessionidmap.index.values)
 
     offset_sessions = np.zeros(test_data[session_key].nunique()+1, dtype=np.int32)
@@ -109,6 +109,7 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
                 #get top-20
                 vector = vector.head(20)
                 #pass item ids
+                #for i in range(20): vector.index.values[i] = itemidmap.index[vector.index.values[i]]
                 top_preds[i] = vector.index.values
 
             #print(top_preds)
@@ -123,10 +124,12 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
         for idx in mask:
             #print(iters[idx])
             idx2 = sessionidmap.index[iters[idx]]
+            #print(idx2)
+            #print(top_preds[idx])
             topN_df[idx2] = top_preds[idx]
             #print(topN_df)
             maxiter += 1
-            print(maxiter)
+            #print(maxiter)
             if maxiter >= len(offset_sessions)-1:
                 iters[idx] = -1
             else:
