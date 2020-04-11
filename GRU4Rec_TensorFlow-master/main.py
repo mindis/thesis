@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Feb 26 2017
-Author: Weiping Song
-"""
 import os
 import tensorflow as tf
 import tensorflow.compat.v1 as tf
@@ -57,7 +52,7 @@ def parseArgs():
     parser.add_argument('--size', default=100, type=int)
     parser.add_argument('--epoch', default=3, type=int)
     parser.add_argument('--lr', default=0.001, type=float)
-    parser.add_argument('--train', default=0, type=int)
+    parser.add_argument('--train', default=1, type=int)
     parser.add_argument('--test', default=2, type=int)
     parser.add_argument('--hidden_act', default='tanh', type=str)
     parser.add_argument('--final_act', default='softmax', type=str)

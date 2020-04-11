@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Feb 26, 2017
-@author: Weiping Song
-"""
+
 import os
 import tensorflow as tf
 import tensorflow.compat.v1 as tf

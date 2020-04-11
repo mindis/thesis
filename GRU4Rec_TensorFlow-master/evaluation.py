@@ -1,8 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Feb 27 2017
-Author: Weiping Song
-"""
+
 import numpy as np
 import pandas as pd
 
