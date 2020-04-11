@@ -22,8 +22,9 @@ from ecommerce_recsys import views
 
 
 router = routers.DefaultRouter()
-router.register(r'interactions', views.ProductInteractionsViewSet)
+router.register(r'product-interactions', views.ProductInteractionsViewSet)
 router.register(r'relations', views.BannerProductViewSet)
+router.register(r'banner-interactions',views.BannerInteractionsViewSet)
 router.register(r'banners-recommendation', views.TopNBannersViewSet)
 
 

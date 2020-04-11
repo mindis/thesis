@@ -10,7 +10,7 @@ class ProductInteractions(models.Model):
     user_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
     product_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
     timestamp = models.DateTimeField(auto_now_add=False,null=False)
-    #event_type = models.CharField(max_length=20, blank=False, null=False)
+    event_type = models.CharField(max_length=20,blank=True,null=False)
 
     class Meta:
         ordering = ['timestamp','user_id']
@@ -18,6 +18,15 @@ class ProductInteractions(models.Model):
     # def __str__(self):
     #     return self.product_id
 
+class BannerInteractions(models.Model):
+
+    user_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
+    banner_id = models.IntegerField(blank=False, null=False)
+    banner_pos = models.IntegerField(blank=False,null=False)
+    timestamp = models.DateTimeField(auto_now_add=False, null=False)
+
+    class Meta:
+        ordering = ['timestamp','user_id']
 
 
 class BannerProduct(models.Model):
