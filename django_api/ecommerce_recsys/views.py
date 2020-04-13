@@ -107,7 +107,7 @@ class BannerInteractionsViewSet(viewsets.ModelViewSet):
         return super(BannerInteractionsViewSet, self).get_serializer(*args, **kwargs)
 
     """DELETE whole model"""
-    @action(methods=['delete'], detail=False)
+    # @action(methods=['delete'], detail=False)
     def delete(self, request):
         queryset = BannerInteractions.objects.all()
         queryset.delete()
