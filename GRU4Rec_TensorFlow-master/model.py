@@ -76,7 +76,7 @@ class GRU4Rec:
         self.predict_state = [np.zeros([self.batch_size, self.rnn_size], dtype=np.float32) for _ in range(self.layers)]
         ckpt = tf.train.get_checkpoint_state(self.checkpoint_dir)
         if ckpt and ckpt.model_checkpoint_path:
-            self.saver.restore(sess, '{}/gru-model-{}'.format(self.checkpoint_dir, args.test_model))
+            self.saver.restore(sess, '{0}/gru-model-loss-{1}-{2}'.format(self.checkpoint_dir, args.loss, args.test_model))
 
     ########################ACTIVATION FUNCTIONS#########################
     def linear(self, X):
@@ -169,7 +169,7 @@ class GRU4Rec:
         offset_sessions[1:] = data.groupby(self.session_key).size().cumsum()
         return offset_sessions
     
-    def fit(self, data):
+    def fit(self, data, loss):
         self.error_during_train = False
         itemids = data[self.item_key].unique()
         self.n_items = len(itemids)
@@ -226,7 +226,7 @@ class GRU4Rec:
                 print('Epoch {}: Nan error!'.format(epoch, avgc))
                 self.error_during_train = True
                 return
-            self.saver.save(self.sess, '{}/gru-model'.format(self.checkpoint_dir), global_step=epoch)
+            self.saver.save(self.sess, '{0}/gru-model-loss-{1}'.format(self.checkpoint_dir, loss), global_step=epoch)
     
     def predict_next_batch(self, session_ids, input_item_ids, itemidmap, batch=50):
         '''

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 import json
+import pandas as pd
 import csv
 from django.http import HttpResponse
 from django.core import exceptions
@@ -23,6 +24,17 @@ class ProductInteractionsViewSet(viewsets.ModelViewSet):
     queryset = ProductInteractions.objects.all()
     serializer_class = ProductInteractionsSerializer
 
+    def list(self, request):
+        queryset = ProductInteractions.objects.all()
+        serializer = ProductInteractionsSerializer(queryset, many=True)
+        #transform serializer data to pandas dataframe
+        df = pd.DataFrame.from_dict(serializer.data)
+        #df.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/dj_user_product.csv')
+        return Response(serializer.data)
+
+    # def retrieve(self, request, *args, **kwargs):
+    #     return Response({'something': 'my custom JSON'})
+
     """POST multiple objects"""
     def get_serializer(self, *args, **kwargs):
         if self.request.method.lower() == 'post':
@@ -30,15 +42,22 @@ class ProductInteractionsViewSet(viewsets.ModelViewSet):
             kwargs['many'] = isinstance(data, list)
         return super(ProductInteractionsViewSet, self).get_serializer(*args, **kwargs)
 
+
     """DELETE whole model"""
-    @action(methods=['delete'], detail=False)
+
     def delete(self, request):
 
         queryset = ProductInteractions.objects.all()
         queryset.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # """PUT multiple objects"""
+    # @action(methods=['single_delete'], detail=False)
+    # def single_delete(self, request, pk, format=None):
+    #     snippet = self.get_object(pk)
+    #     snippet.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
+
+        # """PUT multiple objects"""
     # @action(methods=['put'],detail = False)
     # def put(self, request, *args, **kwargs):
     #     # partial = kwargs.pop('partial', False)
@@ -108,9 +127,9 @@ def export_user_product(request):
     response = HttpResponse(content_type='text/csv')
 
     writer = csv.writer(response)
-    writer.writerow(['user_id', 'product_id', 'timestamp'])
+    writer.writerow(['user_id', 'product_id', 'timestamp','event_type'])
 
-    for record in ProductInteractions.objects.all().values_list('user_id', 'product_id', 'timestamp'):
+    for record in ProductInteractions.objects.all().values_list('user_id', 'product_id', 'timestamp','event_type'):
         writer.writerow(record)
 
     response['Content-Disposition'] = 'attachment; filename="user_product.csv"'

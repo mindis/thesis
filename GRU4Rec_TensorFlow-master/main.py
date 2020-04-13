@@ -52,11 +52,11 @@ def parseArgs():
     parser.add_argument('--size', default=100, type=int)
     parser.add_argument('--epoch', default=3, type=int)
     parser.add_argument('--lr', default=0.001, type=float)
-    parser.add_argument('--train', default=1, type=int)
+    parser.add_argument('--train', default=0, type=int)
     parser.add_argument('--test', default=2, type=int)
     parser.add_argument('--hidden_act', default='tanh', type=str)
     parser.add_argument('--final_act', default='softmax', type=str)
-    parser.add_argument('--loss', default='cross-entropy', type=str)
+    parser.add_argument('--loss', default='top1', type=str)
     parser.add_argument('--dropout', default='0.5', type=float)
     
     return parser.parse_args()
@@ -68,14 +68,11 @@ if __name__ == '__main__':
     data = pd.read_csv(PATH_TO_TRAIN)
     #valid = pd.read_csv(PATH_TO_TEST, dtype={'product_id': np.int64})
     valid = pd.read_csv(PATH_TO_TEST)
-    #valid = valid.iloc[:100000, :]
-    #valid = data.iloc[90000:100000, :]
     data.drop(columns='Unnamed: 0',axis=1,inplace=True)
     valid.drop(columns='Unnamed: 0',axis=1,inplace=True)
     print(data,valid)
     #data, valid = train_test_split(data, random_state=42)
     args = Args()
-    #args.n_items = len(data['movieId'].unique())
     args.n_items = len(data['product_id'].unique())
     args.layers = command_line.layer
     args.rnn_size = command_line.size
@@ -95,7 +92,7 @@ if __name__ == '__main__':
     with tf.Session(config=gpu_config) as sess:
         gru = model.GRU4Rec(sess, args)
         if args.is_training:
-            gru.fit(data)
+            gru.fit(data,args.loss)
         else:
             print("Testing")
             rec , mrr , topN = evaluation.evaluate_sessions_batch(gru, data, valid,session_key='user_id', item_key='product_id', time_key='timestamp')
@@ -104,4 +101,4 @@ if __name__ == '__main__':
             topN = pd.DataFrame(topN)
             """store Top20 products for every user_session in a csv file"""
             #topN.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/topN_preds.csv')
-            topN.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/topN_preds.csv')
+            #topN.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/topN_preds.csv')
