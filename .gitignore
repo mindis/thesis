@@ -2,3 +2,6 @@
 /GRU4REC_TensorFlow/.idea/
 /DeepMF_keras/.idea/
 /DeepMF_keras/model/
+/DeepMF_keras/dmf_pharmacy-data.log
+/django_api/.idea/
+/django_api/ecommerce_recsys/migrations/

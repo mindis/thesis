@@ -61,12 +61,12 @@ if __name__ == "__main__":
     #dw_t = dw_t[dw_t['timestamp'] <= '1 days 00:00:00']
     # #print(dw_t)
     #
-    # """Calculate the average dwelltime of the records, ignoring outliers"""
-    # non_zero_dwt = dw_t[(dw_t['timestamp'] != '0 days 00:00:00') & (dw_t['timestamp'] < '0 days 01:00:00')]
-    # print(non_zero_dwt)
-    # av_dwt = non_zero_dwt['timestamp'].mean()
-    # #av_dwt = datetime.datetime.strptime(av_dwt,"%H:%M:%S")
-    # print(av_dwt)
+    """Calculate the average dwelltime of the records, ignoring outliers"""
+    non_zero_dwt = dw_t[(dw_t['timestamp'] != '0 days 00:00:00') & (dw_t['timestamp'] < '0 days 01:00:00')]
+    print(non_zero_dwt)
+    av_dwt = non_zero_dwt['timestamp'].mean()
+    #av_dwt = datetime.datetime.strptime(av_dwt,"%H:%M:%S")
+    print(av_dwt)
     #
     # """Replace last click duration of each session with the average dwelltime"""
     # dw_t.loc[dw_t['timestamp'] == '00:00:00'] = av_dwt
