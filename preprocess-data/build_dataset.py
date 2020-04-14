@@ -72,7 +72,7 @@ def normalize_ratings(df):
 if __name__ == "__main__":
 
     """e-Pharmacy data"""
-    PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/users_products.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_data_indexed.csv'
     data = pd.read_csv(PATH)
     userkey = 'user_id'
     itemkey = 'product_id'
@@ -99,11 +99,13 @@ if __name__ == "__main__":
     print(data)
 
     data = pd.DataFrame(data)
-    data.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/cleaned_users_products.csv')
+    data.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_data_indexed2.csv')
     # STEP 2 --- BUILD DATASET
     #ratings_df = build_dataset_with_ratings(data, userkey, itemkey)
     #rnn_df = build_dataset_for_rnn(data,userkey,timekey)
     #print(ratings_df)
+
+
 
     # ratings_df.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings.csv')
     #
