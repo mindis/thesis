@@ -4,18 +4,33 @@ import pandas as pd
 import csv
 from django.http import HttpResponse
 from django.core import exceptions
-from django.http import JsonResponse
+from django.http import JsonResponse,Http404
 from ecommerce_recsys.models import ProductInteractions, BannerProduct, TopNBanners, BannerInteractions
 from ecommerce_recsys.serializers import ProductInteractionsSerializer, BannerProductSerializer, TopNBannersSerializer, BannerInteractionsSerializer
 from rest_framework import viewsets,permissions,views,status
-from rest_framework.decorators import parser_classes
 from rest_framework.decorators import action
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from django.http import Http404
 from rest_framework.views import APIView
+from django_filters import rest_framework
+from rest_framework import filters
+from django_filters import FilterSet
+
+
+
+class ProductInteractionsFilter(rest_framework.FilterSet):
+
+    class Meta:
+        model = ProductInteractions
+        fields = {
+            'user_id':['icontains'],
+            'product_id':['icontains'],
+            'timestamp':['iexact','lte','gte'],
+            'event_type':['iexact']
+        }
 
 class ProductInteractionsViewSet(viewsets.ModelViewSet):
+
     """
     API endpoint that allows product interactions to be viewed or edited.
     """
@@ -23,19 +38,26 @@ class ProductInteractionsViewSet(viewsets.ModelViewSet):
     #@parser_classes([JSONParser])
     queryset = ProductInteractions.objects.all()
     serializer_class = ProductInteractionsSerializer
+    filterset_class = ProductInteractionsFilter
+
+    filter_backends = [rest_framework.DjangoFilterBackend]
+    #filter_fields = ('user_id', 'product_id','event_type')
+    #search_fields = ('user_id', 'product_id','event_type')
+
+    #overwrite GET and return records that contain purchase as event_type
+    # def get_queryset(self):
+    #     return ProductInteractions.objects.filter(event_type__icontains = 'purchase')
 
     def list(self, request):
         queryset = ProductInteractions.objects.all()
         serializer = ProductInteractionsSerializer(queryset, many=True)
         #transform serializer data to pandas dataframe
         df = pd.DataFrame.from_dict(serializer.data)
+        #print(df)
         #df.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/dj_user_product.csv')
         return Response(serializer.data)
 
-    # def retrieve(self, request, *args, **kwargs):
-    #     return Response({'something': 'my custom JSON'})
-
-    """POST multiple objects"""
+    """Receive multiple POSTS"""
     def get_serializer(self, *args, **kwargs):
         if self.request.method.lower() == 'post':
             data = kwargs.get('data')
@@ -43,7 +65,7 @@ class ProductInteractionsViewSet(viewsets.ModelViewSet):
         return super(ProductInteractionsViewSet, self).get_serializer(*args, **kwargs)
 
 
-    """DELETE whole model"""
+    """DELETE all records"""
 
     def delete(self, request):
 
@@ -57,18 +79,14 @@ class ProductInteractionsViewSet(viewsets.ModelViewSet):
     #     snippet.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
-        # """PUT multiple objects"""
-    # @action(methods=['put'],detail = False)
-    # def put(self, request, *args, **kwargs):
-    #     # partial = kwargs.pop('partial', False)
-    #     # instance = self.get_object()
-    #     queryset = ProductInteractions.objects.all()
-    #     queryset.delete()
-    #     serializer = ProductInteractionsSerializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data,status=status.HTTP_200_OK)
-    #     return Response(status=status.HTTP_400_BAD_REQUEST)
+class BannerProductFilter(rest_framework.FilterSet):
+
+    class Meta:
+        model = BannerProduct
+        fields = {
+            'banner_id':['iexact'],
+            'product_id':['icontains'],
+        }
 
 class BannerProductViewSet(viewsets.ModelViewSet):
     """
@@ -76,15 +94,18 @@ class BannerProductViewSet(viewsets.ModelViewSet):
     """
     queryset = BannerProduct.objects.all()
     serializer_class = BannerProductSerializer
+    filterset_class = BannerProductFilter
 
+    filter_backends = [rest_framework.DjangoFilterBackend]
+
+    """Receive multiple POSTS"""
     def get_serializer(self, *args, **kwargs):
         if self.request.method.lower() == 'post':
             data = kwargs.get('data')
             kwargs['many'] = isinstance(data, list)
         return super(BannerProductViewSet, self).get_serializer(*args, **kwargs)
 
-    """DELETE whole model"""
-    @action(methods=['delete'], detail=False)
+    """DELETE all records"""
     def delete(self, request):
         queryset = BannerProduct.objects.all()
         queryset.delete()
@@ -92,22 +113,33 @@ class BannerProductViewSet(viewsets.ModelViewSet):
 
     # def update(self, request, pk=None):
     #     pass
+class BannerInteractionsFilter(rest_framework.FilterSet):
+
+    class Meta:
+        model = BannerInteractions
+        fields = {
+            'user_id':['icontains'],
+            'banner_id': ['iexact'],
+            'banner_pos':['iexact'],
+            'timestamp':['iexact','lte','gte'],
+        }
 
 class BannerInteractionsViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows banners/products to be viewed or edited.
+    API endpoint that allows banners-interactions to be viewed or edited.
     """
     queryset = BannerInteractions.objects.all()
     serializer_class = BannerInteractionsSerializer
+    filterset_class = BannerInteractionsFilter
 
+    """Receive multiple posts"""
     def get_serializer(self, *args, **kwargs):
         if self.request.method.lower() == 'post':
             data = kwargs.get('data')
             kwargs['many'] = isinstance(data, list)
         return super(BannerInteractionsViewSet, self).get_serializer(*args, **kwargs)
 
-    """DELETE whole model"""
-    # @action(methods=['delete'], detail=False)
+    """DELETE all records"""
     def delete(self, request):
         queryset = BannerInteractions.objects.all()
         queryset.delete()
@@ -116,12 +148,13 @@ class BannerInteractionsViewSet(viewsets.ModelViewSet):
 
 class TopNBannersViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows product interactions to be viewed or edited.
+    API endpoint that allows topN banners to be viewed or edited.
     """
     queryset = TopNBanners.objects.all()
     serializer_class = TopNBannersSerializer
 
 
+"""Export json data stored in tables in csv files"""
 def export_user_product(request):
 
     response = HttpResponse(content_type='text/csv')
@@ -169,12 +202,4 @@ def export_banner_product(request):
 
 
 
-# class ExampleView(APIView):
-#     """
-#     A view that can accept POST requests with JSON content.
-#     """
-#     parser_classes = [JSONParser]
-#
-#     def post(self, request, format=None):
-#         return Response({'received data': request.data})
 

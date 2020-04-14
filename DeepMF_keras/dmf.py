@@ -19,8 +19,8 @@ def parse_args():
     parser = ArgumentParser(description='Run DMF.')
     parser.add_argument('--path', nargs='?', default='/home/nick/Desktop/thesis/datasets',
                         help='Input data path.')
-    parser.add_argument('--dataset', nargs='?', default='cosmetics-shop-data',
-                        help='Choose a dataset, either ml-1m or ml-100k.')
+    parser.add_argument('--dataset', nargs='?', default='pharmacy-data',
+                        help='Choose a dataset for DMF application')
     parser.add_argument('--epochs', type=int, default=10,
                         help='Number of epochs.')
     parser.add_argument('--batch_size', type=int, default=32,
@@ -143,7 +143,7 @@ if __name__ == '__main__':
                         filename='dmf_%s.log' % data_set,
                         level=logging.INFO)
 
-    logging.info('start....')
+    logging.info('Start....')
 
     if not os.path.exists('model'):
         os.mkdir('model')
@@ -219,12 +219,13 @@ if __name__ == '__main__':
             model.save_weights(model_out_file, overwrite=True)
             #hold the dataframe matching the best epoch
             final_df = topN_df
-            print(final_df)
+            #print(final_df)
 
     print('Finished.\n Best epoch %d: HR = %.4f, NDCG = %.4f' % (best_iter, best_hr, best_ndcg))
     logging.info('Best epoch %d: HR = %.4f, NDCG = %.4f' % (best_iter, best_hr, best_ndcg))
 
     print('Top-N Products for each user{}'.format(final_df))
     final_df = pd.DataFrame(final_df)
+    print(final_df)
     #preds_df.to_csv('path...')
 

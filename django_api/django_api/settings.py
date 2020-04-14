@@ -9,11 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-'rest_framework_json_api.filters.QueryParameterValidationFilter',
-'rest_framework_json_api.filters.OrderingFilter',
-'rest_framework_json_api.django_filters.DjangoFilterBackend',
-'rest_framework.filters.SearchFilter',
-'django_filters.rest_framework.DjangoFilterBackend'
 
 import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -79,6 +74,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'ecommerce_recsys',
     'corsheaders',
+    'django_filters',
 ]
 
 MIDDLEWARE = [

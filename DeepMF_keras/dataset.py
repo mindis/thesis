@@ -5,13 +5,12 @@ import os
 
 class DataSet(object):
 
-    def __init__(self, path, data_set='cosmetics-shop-data'):
-    #def __init__(self, path, data_set='retail-rocket'):
+    #def __init__(self, path, data_set='cosmetics-shop-data'):
+    def __init__(self, path, data_set='pharmacy-data'):
         path_sep = os.path.sep
         filename = path + path_sep + data_set + path_sep
         print(filename)
-        #filename += 'ratings100k.csv'
-        filename += 'implicit-data/indexed_implicit_ratings.csv'
+        filename += 'ratings-data/user_product_ratings_idx_50k.csv'
         data_separator = ','
         # if data_set == 'ml-100k':
         #     filename += 'u.data'
@@ -122,7 +121,7 @@ class DataSet(object):
 
 
 if __name__ == '__main__':
-    #dataset = DataSet('data/')
+
     dataset = DataSet('/home/nick/Desktop/thesis/datasets/')
     print(len(dataset.train))
     print(len(dataset.test))
