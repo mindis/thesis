@@ -18,14 +18,15 @@ from django.contrib import admin
 #from . import views
 from django.urls import include, path
 from rest_framework import routers
-from ecommerce_recsys import views
+from ecommerce_recsys import viewsets, views
 
 
 router = routers.DefaultRouter()
-router.register(r'product-interactions', views.ProductInteractionsViewSet)
-router.register(r'relations', views.BannerProductViewSet)
-router.register(r'banner-interactions',views.BannerInteractionsViewSet)
-router.register(r'banners-recommendation', views.TopNBannersViewSet)
+router.register(r'product-interactions', viewsets.ProductInteractionsViewSet)
+router.register(r'banner-product-relations', viewsets.BannerProductViewSet)
+router.register(r'banner-interactions',viewsets.BannerInteractionsViewSet)
+router.register(r'banner-locations',viewsets.BannerLocationViewSet)
+router.register(r'banner-recommendations', viewsets.TopNBannersViewSet)
 
 
 urlpatterns = [

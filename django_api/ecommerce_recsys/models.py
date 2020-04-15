@@ -7,36 +7,47 @@ alphanumeric = RegexValidator(r'^[0-9a-zA-Z]*$', 'Only alphanumeric characters a
 
 class ProductInteractions(models.Model):
 
-    user_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
-    product_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
+    user_id = models.CharField(max_length=128, blank=False, null=False, validators=[alphanumeric])
+    product_id = models.CharField(max_length=128, blank=True, null=False, validators=[alphanumeric])
+    cookie_id = models.CharField(max_length=128,blank=True,null=False)
     timestamp = models.DateTimeField(auto_now_add=False,null=False)
     event_type = models.CharField(max_length=20,blank=True,null=False)
 
     class Meta:
-        ordering = ['timestamp','user_id']
+        ordering = ['user_id','timestamp']
 
     # def __str__(self):
     #     return self.product_id
 
 class BannerInteractions(models.Model):
 
-    user_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
-    banner_id = models.IntegerField(blank=False, null=False)
-    banner_pos = models.IntegerField(blank=False,null=False)
+    user_id = models.CharField(max_length=128, blank=False, null=False, validators=[alphanumeric])
+    cookie_id = models.CharField(max_length=128,blank=True,null=False)
+    banner_id = models.IntegerField(blank=True, null=False)
+    banner_pos = models.IntegerField(blank=True,null=False)
     timestamp = models.DateTimeField(auto_now_add=False, null=False)
+    event_type = models.CharField(max_length=20,blank=True,null=False)
+
 
     class Meta:
-        ordering = ['timestamp','user_id']
+        ordering = ['user_id','timestamp']
 
 
 class BannerProduct(models.Model):
     banner_id = models.IntegerField(blank=False,null=False)
-    product_id = models.CharField(max_length=256, blank=False, null=False, validators=[alphanumeric])
+    product_id = models.CharField(max_length=128, blank=False, null=False, validators=[alphanumeric])
 
     class Meta:
         ordering = ['banner_id']
 
     #product_id = models.ForeignKey(ProductInteractions,on_delete=models.CASCADE)
+
+class BannerLocation(models.Model):
+    banner_id = models.IntegerField(blank=False, null=False)
+    location_id = models.CharField(max_length=128,blank=True,null=False)
+
+    class Meta:
+        ordering = ['location_id']
 
 
 class TopNBanners(models.Model):

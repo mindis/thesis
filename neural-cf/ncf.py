@@ -5,18 +5,20 @@ import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 from sklearn.preprocessing import MinMaxScaler
 
-PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_ratings_thr5.csv'
+PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings.csv'
 df = pd.read_csv(PATH)
+df.drop(columns='Unnamed: 0',inplace=True)
 print(df.shape)
-df = df[:100000]
+#df = df[:50000]
 print(df.shape)
 
-threshold = 20
+
+threshold = 30
 
 user_interactions = pd.DataFrame(df['user_id'].value_counts())
 user_interactions.index.name = 'user_id'
 user_interactions.rename(columns=({'user_id':'freq'}),inplace=True)
-user_interactions = user_interactions[user_interactions['freq']>=30]
+user_interactions = user_interactions[user_interactions['freq'] >= threshold]
 
 list = user_interactions.index.values
 df = df[df['user_id'].isin(list)]
@@ -24,10 +26,10 @@ print(df.shape)
 
 print('Number of unique users: ', df['user_id'].nunique())
 print('Number of unique items: ', df['product_id'].nunique())
-print(df)
+#print(df)
 
 user_item_matrix = df.pivot(index='user_id', columns='product_id', values='rating')
-#print(user_item_matrix)
+print(user_item_matrix)
 user_item_matrix.fillna(0, inplace=True)
 
 users = user_item_matrix.index.tolist()
@@ -94,8 +96,8 @@ local_init = tf.local_variables_initializer()
 pred_data = pd.DataFrame()
 
 with tf.Session() as session:
-    epochs = 50
-    batch_size = 35
+    epochs = 100
+    batch_size = 50
 
     session.run(init)
     session.run(local_init)
@@ -134,7 +136,11 @@ with tf.Session() as session:
     top_ten_ranked = top_ten_ranked.groupby('user_id').head(10)
     print(top_ten_ranked)
 
-    #Get Top-10 products for user_id []
+    """Get Top-10 products for user_id []"""
     userID = input('Enter userID to generate recommendations:\n')
     print(f'Generating recommendations for userID {userID}...')
-    print(top_ten_ranked.loc[top_ten_ranked['user_id'] == userID])
+    top_ten_ranked = top_ten_ranked.loc[top_ten_ranked['user_id'] == userID]
+    top_ten_products = pd.DataFrame(top_ten_ranked[['product_id','rating']])
+    top_ten_products.reset_index(inplace=True)
+    top_ten_products.drop(columns='index',inplace=True)
+    print(top_ten_products)
