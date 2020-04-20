@@ -7,3 +7,4 @@
 /django_api/ecommerce_recsys/migrations/
 /django_api/preprocess_data.egg-info/
 /django_api/dist/
+/django_api/django_api/settings.py
