@@ -5,3 +5,5 @@
 /DeepMF_keras/dmf_pharmacy-data.log
 /django_api/.idea/
 /django_api/ecommerce_recsys/migrations/
+/django_api/preprocess_data.egg-info/
+/django_api/dist/

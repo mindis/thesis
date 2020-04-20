@@ -12,6 +12,7 @@ import evaluation
 from sklearn.model_selection import train_test_split
 
 """Uncomment the dataset the dataset path for experimenting """
+
 PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_train_indexed.csv'
 #PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_train2.csv'
 PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_test_indexed.csv'
