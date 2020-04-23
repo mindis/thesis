@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size=50, session_key='user_session', item_key='product_id', time_key='event_time'):
+def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size=50, session_key='user_id', item_key='product_id', time_key='timestamp'):
     
     '''
     Evaluates the GRU4Rec network wrt. recommendation accuracy measured by recall@N and MRR@N.
@@ -44,16 +44,17 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
     """Build sessionidmap from test data."""
     sessionids = test_data[session_key].unique()
     sessionidmap = pd.Series(data=np.arange(len(sessionids)), index=sessionids)
-    #print(sessionidmap)
+    print(sessionidmap)
     topN_df = pd.DataFrame(columns=sessionidmap.index.values)
 
     offset_sessions = np.zeros(test_data[session_key].nunique()+1, dtype=np.int32)
     offset_sessionids = np.array(sessionidmap)
     print(offset_sessionids)
+
     """compute the cumulative sum for the size of each session(per clicks)"""
     offset_sessions[1:] = test_data.groupby(session_key).size().cumsum()
-    print(offset_sessions.size)
-    print(offset_sessions)
+    # print(offset_sessions.size)
+    # print(offset_sessions)
     evaluation_point_count = 0
     mrr, recall = 0.0, 0.0
     if len(offset_sessions) - 1 < batch_size:
@@ -85,9 +86,11 @@ def evaluate_sessions_batch(model, train_data, test_data, cut_off=20, batch_size
             # print('Out_idx:{}'.format(out_idx))
             preds = model.predict_next_batch(iters, in_idx, itemidmap, batch_size)
             preds.fillna(0, inplace=True)
+            #print(preds)
             #print('Predictions{}\n:'.format(preds))
             in_idx[valid_mask] = out_idx
-            ranks = (preds.values.T[valid_mask].T > np.diag(preds.ix[in_idx].values)[valid_mask]).sum(axis=0) + 1
+            #ranks = (preds.values.T[valid_mask].T > np.diag(preds.ix[in_idx].values)[valid_mask]).sum(axis=0) + 1
+            ranks = (preds.values.T[valid_mask].T > np.diag(preds.loc[in_idx].values)[valid_mask]).sum(axis=0) + 1
             # print('Ranks{}'.format(ranks))
             rank_ok = ranks < cut_off
             recall += rank_ok.sum()

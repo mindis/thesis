@@ -45,24 +45,32 @@ def get_top_n(predictions, n=10):
 
     return top_n
 
+if __name__ == '__main__':
 
-# First train an SVD algorithm on the movielens dataset.
-#data = Dataset.load_builtin('ml-100k')
-file_path = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k_surprise.csv'
-reader = Reader(line_format='user item rating', sep=',')
-data = Dataset.load_from_file(file_path, reader=reader)
-#kf = KFold(n_splits=10)
+    file_path = '/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings_idx_50k.csv'
+    reader = Reader(line_format='user item rating', sep=',',skip_lines=1)
+    data = Dataset.load_from_file(file_path, reader=reader)
 
 
-# for algorithm in [SVD(), SVDpp(), SlopeOne(), NMF(), NormalPredictor(), KNNBaseline(), KNNBasic(), KNNWithMeans(),
-#                   KNNWithZScore(), BaselineOnly(), CoClustering()]:
+    for algorithm in [BaselineOnly()]: #SVDpp(), SlopeOne(), NMF(), NormalPredictor(), KNNBaseline(), KNNBasic(), KNNWithMeans(),
+    #               KNNWithZScore(), BaselineOnly(), CoClustering()]:
 
-algo = SVDpp()
-trainset = data.build_full_trainset()
-algo.fit(trainset)
-testset = trainset.build_anti_testset()
-predictions = algo.test(testset)
-print('RMSE: {0:.2f}'.format(accuracy.rmse(predictions)))
+
+        trainset = data.build_full_trainset()
+        algorithm.fit(trainset)
+        testset = trainset.build_anti_testset()
+        predictions = algorithm.test(testset)
+        #print(predictions)
+        print('{0}\nRMSE: {1:.2f}'.format(algorithm,accuracy.rmse(predictions)))
+
+
+    # algo = SVDpp()
+# trainset = data.build_full_trainset()
+# algo.fit(trainset)
+# testset = trainset.build_anti_testset()
+# predictions = algo.test(testset)
+# print(predictions)
+# print('RMSE: {0:.2f}'.format(accuracy.rmse(predictions)))
 # for trainset, testset in kf.split(data):
 #
 #     # train and test algorithm.
@@ -73,14 +81,13 @@ print('RMSE: {0:.2f}'.format(accuracy.rmse(predictions)))
 #     accuracy.rmse(predictions, verbose=True)
 # Than predict ratings for all pairs (u, i) that are NOT in the training set.
 
-top_n = get_top_n(predictions, n=10)
-# df = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k.csv')
-# print(df['user_id'].nunique())
-# #cross_validate(BaselineOnly(), data, verbose=True)
-topN_df = pd.DataFrame()
-# Print the recommended items for each user
-for uid, user_ratings in top_n.items():
-     topN_df[uid] = np.array([iid for (iid, _) in user_ratings])
-     #print(uid, [iid for (iid, _) in user_ratings])
-#
-print(topN_df)
+    top_n = get_top_n(predictions, n=10)
+    # df = pd.read_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k.csv')
+    # print(df['user_id'].nunique())
+    # #cross_validate(BaselineOnly(), data, verbose=True)
+    topN_df = pd.DataFrame()
+    # Print the recommended items for each user
+    for uid, user_ratings in top_n.items():
+         topN_df[uid] = np.array([iid for (iid, _) in user_ratings])
+
+    print(topN_df)

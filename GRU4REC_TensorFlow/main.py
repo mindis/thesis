@@ -13,9 +13,10 @@ from sklearn.model_selection import train_test_split
 
 """Uncomment the dataset the dataset path for experimenting """
 
-PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_train_indexed.csv'
-#PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/rnn-data/rnn_train2.csv'
-PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_test_indexed.csv'
+#PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_train_indexed.csv'
+PATH_TO_TRAIN = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn-data/trainset.csv'
+PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn-data/testset.csv'
+#PATH_TO_TEST = '/home/nick/Desktop/thesis/datasets/pharmacy-data/rnn_test_indexed.csv'
 #/PATH/TO/rsc15_train_full.txt'
 #'/PATH/TO/rsc15_test.txt'
 
@@ -32,10 +33,7 @@ class Args():
     sigma = 0
     init_as_normal = False
     reset_after_session = True
-    #session_key = 'visitorid'
     session_key = 'user_id'
-    #session_key = 'user_session'
-    #item_key = 'itemid'
     item_key = 'product_id'
     time_key = 'timestamp'
     #time_key = 'event_time'
@@ -69,8 +67,8 @@ if __name__ == '__main__':
     data = pd.read_csv(PATH_TO_TRAIN)
     #valid = pd.read_csv(PATH_TO_TEST, dtype={'product_id': np.int64})
     valid = pd.read_csv(PATH_TO_TEST)
-    data.drop(columns='Unnamed: 0',axis=1,inplace=True)
-    valid.drop(columns='Unnamed: 0',axis=1,inplace=True)
+    # data.drop(columns='Unnamed: 0',axis=1,inplace=True)
+    # valid.drop(columns='Unnamed: 0',axis=1,inplace=True)
     print(data,valid)
     #data, valid = train_test_split(data, random_state=42)
     args = Args()
@@ -96,10 +94,8 @@ if __name__ == '__main__':
             gru.fit(data,args.loss)
         else:
             print("Testing")
-            rec , mrr , topN = evaluation.evaluate_sessions_batch(gru, data, valid,session_key='user_id', item_key='product_id', time_key='timestamp')
+            rec , mrr , topN= evaluation.evaluate_sessions_batch(gru, data, valid,session_key='user_id', item_key='product_id', time_key='timestamp')
             print('Recall@20: {}\tMRR@20: {}'.format(rec, mrr))
             print(topN)
             topN = pd.DataFrame(topN)
             """store Top20 products for every user_session in a csv file"""
-            #topN.to_csv('/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/topN_preds.csv')
-            #topN.to_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/topN_preds.csv')
