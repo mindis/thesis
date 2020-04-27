@@ -50,7 +50,7 @@ def recommend(userID, user_item, user_vecs, item_vecs, num_items=10):
 if __name__ == "__main__":
 
     #PATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/implicit-data/implicit_binarized.csv'
-    PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings_idx_50k.csv'
+    PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings.csv'
     data = pd.read_csv(PATH)
     print(data)
     userkey = 'user_id'
@@ -58,34 +58,55 @@ if __name__ == "__main__":
 
 
     item_user, user_lookup, item_lookup = create_sparse_matrix(data,userkey,itemkey)
+
     print(item_user)
-    print(type(item_user))
+
+    alpha_val = 15
+    item_user = (item_user * alpha_val).astype('double')
+    #print(item_user)
 
     """initialize a model --- choose a model"""
     #model = implicit.als.AlternatingLeastSquares(factors=20,regularization=0.1,iterations=50)
     model = implicit.als.AlternatingLeastSquares(factors=50)
 
 
-
     user_item = item_user.T.tocsr()
     model.fit(user_item)
-    """train/test split
-    train, test = train_test_split(user_item)
-    # train the model on a sparse matrix of item/user/confidence weights
-    start_time = time.time()
-    model.fit(train.T.tocsr())
-    #model.fit(csr_data)
-    print("--- %s seconds ---" % (time.time() - start_time))
 
-    #print(user_item)
+    # """train/test split"""
+    # train, test = train_test_split(user_item)
+    # train = train.tocoo()
+    # test = test.tocoo()
+    # trainuserids = train.row
+    # testuserids = test.row
+    #
+    # print(np.unique(trainuserids),np.unique(testuserids))
 
-    recommendations = model.recommend(10,test)
-    df = pd.DataFrame(recommendations,columns=['product_id','score'])
-    print(df)
-    """
+    user_vecs = csr_matrix(model.user_factors)
+    item_vecs = csr_matrix(model.item_factors)
 
+    # Create recommendations for user with id 2025
+    user_id = 0
+
+    recommendations = recommend(user_id, user_item, user_vecs, item_vecs)
+
+    print(recommendations)
+
+
+    # # train the model on a sparse matrix of item/user/confidence weights
+    # start_time = time.time()
+    # model.fit(train.T.tocsr())
+    # #model.fit(csr_data)
+    # print("--- %s seconds ---" % (time.time() - start_time))
+    #
+    #
+    # recommendations = model.recommend(0,test)
+    # df = pd.DataFrame(recommendations,columns=['product_id','score'])
+    # print(df)
+    #
+    #
     # """Find related items"""
-    # itemID = 6565
+    # itemID = 0
     # related = model.similar_items(itemID)
     # related = pd.DataFrame(related)
     # print("Related itemIDs:\n{}".format(related))
@@ -101,29 +122,29 @@ if __name__ == "__main__":
     # top_rec_4all = top_rec_4all.T
     # top_rec_4all = pd.DataFrame(data=top_rec_4all,columns=user_lookup.index.categories)
     # print(top_rec_4all)
-
+    #
     # """Personalize predictions by selecting userID"""
     # preferred_userID = '000485159f123d9352d805458550f861'
     # userID = user_lookup.index.get_loc(preferred_userID)
-    # recommendations = model.recommend(userID, user_item)
+    # recommendations = model.recommend(userID, test)
     # recommendations = pd.DataFrame(recommendations, columns=['item', 'score'])
     # recommendations['item'] = recommendations.item.astype(str)
     # """Merge indexed product with real product for user = userID"""
     # recommendations = recommendations.merge(item_lookup, on='item')
     # print('Top-10 Product recommendations for user {0} :\n {1}'.format(preferred_userID, recommendations))
-
-
-    """Get the trained user and item vectors. 
-    We convert them to csr matrices
-    and make recommendations"""
-    user_vecs = csr_matrix(model.user_factors)
-    item_vecs = csr_matrix(model.item_factors)
-    # Create recommendations for person with id 50
-    user_id = 2
-
-    recommendations = recommend(user_id, user_item, user_vecs, item_vecs)
-    recommendations['item'] = recommendations.item.astype(str)
-    """Merge indexed product with real product for user = userID"""
-    recommendations = recommendations.merge(item_lookup, on='item')
-    print(recommendations)
+    #
+    #
+    # # """Get the trained user and item vectors.
+    # # We convert them to csr matrices
+    # # and make recommendations"""
+    # # user_vecs = csr_matrix(model.user_factors)
+    # # item_vecs = csr_matrix(model.item_factors)
+    # # # Create recommendations for person with id 50
+    # # user_id = 2
+    # #
+    # # recommendations = recommend(user_id, user_item, user_vecs, item_vecs)
+    # # recommendations['item'] = recommendations.item.astype(str)
+    # # """Merge indexed product with real product for user = userID"""
+    # # recommendations = recommendations.merge(item_lookup, on='item')
+    # # print(recommendations)
 

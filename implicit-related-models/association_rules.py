@@ -20,7 +20,7 @@ def create_association_rules_df(data,userkey,itemkey):
 
 if __name__ == '__main__':
 
-    FILEPATH = '/home/nick/Desktop/thesis/datasets/cosmetics-shop-data/indexed_ratings10k.csv'
+    FILEPATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/ratings_idx.csv'
 
     data = pd.read_csv(FILEPATH)
     df = create_association_rules_df(data,userkey='user_id',itemkey='product_id')
@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
 
     association_rules = apriori(records, min_support=0.01, min_confidence=0.2, min_lift=3, min_length=2)
-    #print(association_rules)
+    print(association_rules)
     association_results = list(association_rules)
     print('Association rule generation completed.\n')
     association_results_df = pd.DataFrame(association_results)

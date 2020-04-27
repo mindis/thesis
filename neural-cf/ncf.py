@@ -7,10 +7,10 @@ from sklearn.preprocessing import MinMaxScaler
 
 PATH = '/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings.csv'
 df = pd.read_csv(PATH)
-df.drop(columns='Unnamed: 0',inplace=True)
+#df.drop(columns='Unnamed: 0',inplace=True)
 print(df.shape)
 #df = df[:50000]
-print(df.shape)
+#print(df.shape)
 
 
 threshold = 30
@@ -35,7 +35,7 @@ user_item_matrix.fillna(0, inplace=True)
 users = user_item_matrix.index.tolist()
 items = user_item_matrix.columns.tolist()
 
-user_item_matrix = user_item_matrix.as_matrix()
+#user_item_matrix = user_item_matrix.as_matrix()
 print(user_item_matrix.shape)
 
 num_input = df['product_id'].nunique()

@@ -1,3 +1,4 @@
+import logging
 import pandas as pd
 import numpy as np
 import random
@@ -20,7 +21,7 @@ def load_dataset(df):
 
 
     # Add column names
-    df = df.drop(columns = 'Unnamed: 0', axis=1)
+    #df = df.drop(columns = 'Unnamed: 0', axis=1)
     df.columns = ['user', 'item', 'rating']
 
     # Drop any rows with empty cells or rows
@@ -49,6 +50,7 @@ def load_dataset(df):
 
     # Create training and test sets.
     df_train, df_test = train_test_split(df)
+    print(df_train,df_test)
 
     # Create lists of all unique users and artists
     users = list(np.sort(df.user_id.unique()))
@@ -139,7 +141,7 @@ def train_test_split(df):
     df_test = df_test.groupby(['user_id']).first()
     df_test['user_id'] = df_test.index
     df_test = df_test[['user_id', 'item_id', 'rating']]
-    del df_test.index.name
+#    del df_test.index.name
 
     # Remove the same items as we for our test set in our training set.
     mask = df.groupby(['user_id'])['user_id'].transform(mask_first).astype(bool)
@@ -320,73 +322,96 @@ def evaluate(df_neg, K=10):
 
 if __name__ == '__main__':
 
-    data = pd.read_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings_0-10.csv')
+    data = pd.read_csv('/home/nick/Desktop/thesis/datasets/pharmacy-data/ratings-data/user_product_ratings.csv')
     uids, iids, df_train, df_test, df_neg, users, items, item_lookup = load_dataset(data)
+
+    root = logging.getLogger()
+    if root.handlers:
+        root.handlers = []
+    logging.basicConfig(format='%(asctime)s : %(message)s',
+                        filename='neural_cf.log',
+                        level=logging.INFO)
+
+    logging.info('Start....')
 
     # -------------
     # HYPERPARAMS
     # -------------
 
     num_neg = 4
+    latent_features = 8
     epochs = 20
-    batch_size = 512
+    batch_size = 256
     learning_rate = 0.001
+
+    logging.info('num_neg: {0},latent_features: {1},epochs: {2},'
+                 'batch_size: {3},learning_rate: {4}'.format(num_neg,latent_features,epochs,batch_size,learning_rate))
 
     # -------------------------
     # TENSORFLOW GRAPH
     # -------------------------
+    train = True
 
-    # Set up our Tensorflow graph
     graph = tf.Graph()
 
     with graph.as_default():
+
         # Define input placeholders for user, item and label.
         user = tf.placeholder(tf.int32, shape=(None, 1))
         item = tf.placeholder(tf.int32, shape=(None, 1))
         label = tf.placeholder(tf.int32, shape=(None, 1))
 
-        # User feature embedding
-        u_var = tf.Variable(tf.random_normal([len(users), 32], stddev=0.05), name='user_embedding')
-        user_embedding = tf.nn.embedding_lookup(u_var, user)
+        # User embedding for MLP
+        mlp_u_var = tf.Variable(tf.random_normal([len(users), 32], stddev=0.05),
+                                    name='mlp_user_embedding')
+        mlp_user_embedding = tf.nn.embedding_lookup(mlp_u_var, user)
 
-        # Item feature embedding
-        i_var = tf.Variable(tf.random_normal([len(items), 32], stddev=0.05), name='item_embedding')
-        item_embedding = tf.nn.embedding_lookup(i_var, item)
+        # Item embedding for MLP
+        mlp_i_var = tf.Variable(tf.random_normal([len(items), 32], stddev=0.05),
+                                    name='mlp_item_embedding')
+        mlp_item_embedding = tf.nn.embedding_lookup(mlp_i_var, item)
 
-        # Flatten our user and item embeddings.
-        user_embedding = tf.keras.layers.Flatten()(user_embedding)
-        item_embedding = tf.keras.layers.Flatten()(item_embedding)
+        # User embedding for GMF
+        gmf_u_var = tf.Variable(tf.random_normal([len(users), latent_features],
+                                                     stddev=0.05), name='gmf_user_embedding')
+        gmf_user_embedding = tf.nn.embedding_lookup(gmf_u_var, user)
 
-        # Concatenate our two embedding vectors together
-        concatenated = tf.keras.layers.concatenate([user_embedding, item_embedding])
+        # Item embedding for GMF
+        gmf_i_var = tf.Variable(tf.random_normal([len(items), latent_features],
+                                                     stddev=0.05), name='gmf_item_embedding')
+        gmf_item_embedding = tf.nn.embedding_lookup(gmf_i_var, item)
 
-        # Add a first dropout layer.
-        dropout = tf.keras.layers.Dropout(0.2)(concatenated)
+        # Our GMF layers
+        gmf_user_embed = tf.keras.layers.Flatten()(gmf_user_embedding)
+        gmf_item_embed = tf.keras.layers.Flatten()(gmf_item_embedding)
+        gmf_matrix = tf.multiply(gmf_user_embed, gmf_item_embed)
 
-        # Below we add our four hidden layers along with batch
-        # normalization and dropouts. We use relu as the activation function.
-        layer_1 = tf.keras.layers.Dense(64, activation='relu', name='layer1')(dropout)
-        batch_norm1 = tf.keras.layers.BatchNormalization(name='batch_norm1')(layer_1)
-        dropout1 = tf.keras.layers.Dropout(0.2, name='dropout1')(batch_norm1)
+        # Our MLP layers
+        mlp_user_embed = tf.keras.layers.Flatten()(mlp_user_embedding)
+        mlp_item_embed = tf.keras.layers.Flatten()(mlp_item_embedding)
+        mlp_concat = tf.keras.layers.concatenate([mlp_user_embed, mlp_item_embed])
 
-        layer_2 = tf.keras.layers.Dense(32, activation='relu', name='layer2')(layer_1)
-        batch_norm2 = tf.keras.layers.BatchNormalization(name='batch_norm1')(layer_2)
-        dropout2 = tf.keras.layers.Dropout(0.2, name='dropout1')(batch_norm2)
+        mlp_dropout = tf.keras.layers.Dropout(0.2)(mlp_concat)
 
-        layer_3 = tf.keras.layers.Dense(16, activation='relu', name='layer3')(layer_2)
-        layer_4 = tf.keras.layers.Dense(8, activation='relu', name='layer4')(layer_3)
+        mlp_layer_1 = tf.keras.layers.Dense(64, activation='relu', name='layer1')(mlp_dropout)
+        mlp_batch_norm1 = tf.keras.layers.BatchNormalization(name='batch_norm1')(mlp_layer_1)
+        mlp_dropout1 = tf.keras.layers.Dropout(0.2, name='dropout1')(mlp_batch_norm1)
+
+        mlp_layer_2 = tf.keras.layers.Dense(32, activation='relu', name='layer2')(mlp_dropout1)
+        mlp_batch_norm2 = tf.keras.layers.BatchNormalization(name='batch_norm1')(mlp_layer_2)
+        mlp_dropout2 = tf.keras.layers.Dropout(0.2, name='dropout1')(mlp_batch_norm2)
+
+        mlp_layer_3 = tf.keras.layers.Dense(16, activation='relu', name='layer3')(mlp_dropout2)
+        mlp_layer_4 = tf.keras.layers.Dense(8, activation='relu', name='layer4')(mlp_layer_3)
+
+        # We merge the two networks together
+        merged_vector = tf.keras.layers.concatenate([gmf_matrix, mlp_layer_4])
 
         # Our final single neuron output layer.
-        output_layer = tf.keras.layers.Dense(1,
-                                             kernel_initializer="lecun_uniform",
-                                             name='output_layer')(layer_4)
+        output_layer = tf.keras.layers.Dense(1,kernel_initializer="lecun_uniform",name='output_layer')(merged_vector)
 
-        # Define our loss function as binary cross entropy.
-        labels = tf.cast(label, tf.float32)
-        logits = output_layer
-        loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(
-            labels=labels,
-            logits=logits))
+        # Our loss function as a binary cross entropy.
+        loss = tf.losses.sigmoid_cross_entropy(label, output_layer)
 
         # Train using the Adam optimizer to minimize our loss.
         opt = tf.train.AdamOptimizer(learning_rate=learning_rate)
@@ -394,40 +419,56 @@ if __name__ == '__main__':
 
         # Initialize all tensorflow variables.
         init = tf.global_variables_initializer()
+        saver = tf.train.Saver(tf.global_variables(), max_to_keep=10)
 
     session = tf.Session(config=None, graph=graph)
     session.run(init)
 
-    for epoch in range(epochs):
+    if train is True:
 
-        # Get our training input.
-        user_input, item_input, labels = get_train_instances()
 
-        # Generate a list of minibatches.
-        #print(user_input,item_input,labels)
-        minibatches = random_mini_batches(user_input, item_input, labels)
+        for epoch in range(epochs):
 
-        # This has nothing to do with tensorflow but gives
-        # us a nice progress bar for the training
-        progress = tqdm(total=len(minibatches))
+            # Get our training input.
+            user_input, item_input, labels = get_train_instances()
 
-        # Loop over each batch and feed our users, items and labels
-        # into our graph.
-        for minibatch in minibatches:
-            feed_dict = {user: np.array(minibatch[0]).reshape(-1, 1),
-                         item: np.array(minibatch[1]).reshape(-1, 1),
-                         label: np.array(minibatch[2]).reshape(-1, 1)}
+            # Generate a list of minibatches.
+            #print(user_input,item_input,labels)
+            minibatches = random_mini_batches(user_input, item_input, labels)
 
-            # Execute the graph.
-            _, l = session.run([step, loss], feed_dict)
+            # This has nothing to do with tensorflow but gives
+            # us a nice progress bar for the training
+            progress = tqdm(total=len(minibatches))
 
-            # Update the progress
-            progress.update(1)
-            progress.set_description('Epoch: %d - Loss: %.3f' % (epoch + 1, l))
+            # Loop over each batch and feed our users, items and labels
+            # into our graph.
+            for minibatch in minibatches:
+                feed_dict = {user: np.array(minibatch[0]).reshape(-1, 1),
+                             item: np.array(minibatch[1]).reshape(-1, 1),
+                             label: np.array(minibatch[2]).reshape(-1, 1)}
 
-        progress.close()
+                # Execute the graph.
+                _, l = session.run([step, loss], feed_dict)
+
+                # Update the progress
+                progress.update(1)
+                progress.set_description('Epoch: %d - Loss: %.3f' % (epoch + 1, l))
+
+            progress.close()
+
+            logging.info('Epoch:{0} - Loss: {1}'.format(epoch+1, l))
+
+            saver.save(session,'./checkpoints/ncf-model',global_step=epoch)
+
+    else:
+        test_epoch = 3
+        ckpt = tf.train.get_checkpoint_state('./checkpoints')
+        if ckpt and ckpt.model_checkpoint_path:
+            saver.restore(session, './checkpoints/ncf-model-{}'.format(test_epoch))
+
 
     # Calculate top@K
+
     hits,topK_products = evaluate(df_neg)
     print('\nTop-K product preferences for each user:\n{}'.format(topK_products))
     print('\n Hit-Ratio(HR):{}'.format(np.array(hits).mean()))
